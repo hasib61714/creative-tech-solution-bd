@@ -30,7 +30,14 @@ export default function TestimonialsPage() {
     setRows(await res.json());
     setLoading(false);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void (async () => {
+      setLoading(true);
+      const res = await fetch('/api/admin/testimonials', { headers: authHeaders() });
+      setRows(await res.json());
+      setLoading(false);
+    })();
+  }, []);
 
   async function setStatus(id: number, status: string) {
     await fetch(`/api/admin/testimonials/${id}`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }) });
@@ -60,8 +67,8 @@ export default function TestimonialsPage() {
           <h1 className="text-2xl font-extrabold text-white">Testimonials</h1>
           <p className="text-slate-400 text-sm mt-1">{rows.length} total</p>
         </div>
-        <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-red-600 to-red-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-red-600 transition-all">
+        <button type="button" onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-blue-600 transition-all">
           <Plus className="w-4 h-4" /> Add
         </button>
       </div>
@@ -93,18 +100,18 @@ export default function TestimonialsPage() {
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   {t.status !== 'approved' && (
-                    <button onClick={() => setStatus(t.id, 'approved')} title="Approve"
+                    <button type="button" onClick={() => setStatus(t.id, 'approved')} title="Approve"
                       className="p-1.5 rounded-lg text-slate-500 hover:text-green-400 hover:bg-green-400/10 transition-colors">
                       <CheckCircle2 className="w-4 h-4" />
                     </button>
                   )}
                   {t.status !== 'rejected' && (
-                    <button onClick={() => setStatus(t.id, 'rejected')} title="Reject"
+                    <button type="button" onClick={() => setStatus(t.id, 'rejected')} title="Reject"
                       className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-400/10 transition-colors">
                       <XCircle className="w-4 h-4" />
                     </button>
                   )}
-                  <button onClick={() => remove(t.id)} title="Delete"
+                  <button type="button" onClick={() => remove(t.id)} title="Delete"
                     className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -121,7 +128,7 @@ export default function TestimonialsPage() {
             <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white font-bold text-lg">Add Testimonial</h2>
-              <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+              <button type="button" onClick={() => setOpen(false)} title="Close" className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="flex flex-col gap-4">
               {[
@@ -140,7 +147,7 @@ export default function TestimonialsPage() {
                 <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Rating</label>
                 <div className="flex gap-1">
                   {[1,2,3,4,5].map((n) => (
-                    <button key={n} type="button" onClick={() => setForm((f) => ({ ...f, rating: n }))}
+                    <button key={n} type="button" title={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setForm((f) => ({ ...f, rating: n }))}
                       className="p-1 transition-colors">
                       <Star className={`w-5 h-5 ${n <= form.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-600'}`} />
                     </button>
@@ -154,9 +161,9 @@ export default function TestimonialsPage() {
                   value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} />
               </div>
               <div className="flex gap-3 mt-2">
-                <button onClick={() => setOpen(false)} className="flex-1 py-2.5 rounded-xl border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">Cancel</button>
-                <button onClick={save} disabled={saving || !form.name || !form.message}
-                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-red-700 text-white text-sm font-bold disabled:opacity-40 transition-all">
+                <button type="button" onClick={() => setOpen(false)} className="flex-1 py-2.5 rounded-xl border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">Cancel</button>
+                <button type="button" onClick={save} disabled={saving || !form.name || !form.message}
+                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold disabled:opacity-40 transition-all">
                   {saving ? 'Saving...' : 'Save'}
                 </button>
               </div>

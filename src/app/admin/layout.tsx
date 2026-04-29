@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import NextImage from 'next/image';
 import {
   LayoutDashboard, CalendarDays, Wrench, Image, MessageSquare,
   FileText, Settings, LogOut, Inbox,
@@ -25,8 +26,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem('token')) router.replace('/auth');
-    else setReady(true);
+    void (async () => {
+      if (!localStorage.getItem('token')) router.replace('/auth');
+      else setReady(true);
+    })();
   }, [router]);
 
   function logout() {
@@ -44,12 +47,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-slate-950 flex">
       {/* Sidebar */}
       <aside className="w-56 bg-slate-900 border-r border-white/6 flex flex-col shrink-0 fixed inset-y-0 left-0 z-30">
-        <div className="p-4 border-b border-white/6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="w-7 h-7 bg-linear-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-lg shadow-red-600/20">C</span>
-            <span className="font-extrabold text-white text-sm">Creative<span className="text-red-400">Tech</span></span>
+        <div className="p-4 border-b border-white/6 flex flex-col items-center">
+          <Link href="/" className="flex items-center py-2">
+            <NextImage src="/logopng.png" alt="Creative Tech Solution BD" width={485} height={130} className="h-12 w-auto" />
           </Link>
-          <div className="mt-1.5 text-[9px] font-semibold uppercase tracking-widest text-red-400/70">Admin Panel</div>
+          <div className="mt-2 text-[9px] font-semibold uppercase tracking-widest text-red-400/70">Admin Panel</div>
         </div>
 
         <nav className="flex-1 p-2 flex flex-col gap-0.5 overflow-y-auto">

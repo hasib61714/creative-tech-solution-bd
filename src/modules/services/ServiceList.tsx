@@ -23,13 +23,15 @@ export default function ServiceList() {
       <section className="relative overflow-hidden bg-slate-950 py-20">
         <div className="absolute inset-0 bg-linear-to-r from-slate-950/60 via-slate-950/40 to-slate-950/50" />
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
+        <div className="absolute -top-40 -right-40 w-140 h-140 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
             What We Offer
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-4 max-w-2xl">
-            Our <span className="bg-linear-to-r from-red-400 via-orange-300 to-amber-300 bg-clip-text text-transparent">Services</span>
+            Our <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Services</span>
           </h1>
           <p className="text-slate-300 text-lg max-w-lg">Everything your business needs to grow online — delivered under one roof.</p>
         </div>

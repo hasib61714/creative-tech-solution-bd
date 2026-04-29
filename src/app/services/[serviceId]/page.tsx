@@ -177,7 +177,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 <div className="flex flex-col gap-3">
                   {processSteps.map((step, i) => (
                     <div key={step} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-red-500/20 transition-colors">
-                      <span className="w-8 h-8 bg-linear-to-br from-red-600 to-red-700 rounded-lg text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-md shadow-red-600/20">{i + 1}</span>
+                      <span className="w-8 h-8 bg-linear-to-br from-red-600 to-blue-700 rounded-lg text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-md shadow-red-600/20">{i + 1}</span>
                       <span className="text-slate-600 text-sm pt-1">{step}</span>
                     </div>
                   ))}
@@ -193,7 +193,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       {pkg.highlight && <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />}
                       {pkg.highlight && <span className="text-[10px] bg-red-500/15 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-full w-fit font-semibold">Most Popular</span>}
                       <div className={`font-semibold text-sm ${pkg.highlight ? 'text-white' : 'text-slate-900'}`}>{pkg.name}</div>
-                      <div className="text-2xl font-extrabold text-transparent bg-linear-to-br from-red-500 via-orange-400 to-amber-300 bg-clip-text">{pkg.price}</div>
+                      <div className="text-2xl font-extrabold text-transparent bg-linear-to-br from-red-500 to-blue-600 bg-clip-text">{pkg.price}</div>
                       <ul className="flex flex-col gap-1.5">
                         {pkg.features.map((f) => (
                           <li key={f} className={`text-xs flex items-center gap-2 ${pkg.highlight ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -233,7 +233,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </div>
                 <h3 className="font-bold text-white text-lg mb-2">Book This Service</h3>
                 <p className="text-sm text-slate-400 mb-5">Schedule a free call and we&apos;ll walk you through the entire process.</p>
-                <Link href="/booking" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 to-red-700 text-white hover:from-red-500 hover:to-red-600 shadow-lg shadow-red-600/20 transition-all duration-200 mb-3">
+                <Link href="/booking" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg shadow-red-600/20 transition-all duration-200 mb-3">
                   <CalendarDays className="w-4 h-4" /> Book a Free Call
                 </Link>
                 <Link href="/contact" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-white/8 text-slate-300 border border-white/10 hover:border-white/20 hover:text-white transition-all duration-200">

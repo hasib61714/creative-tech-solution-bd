@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CreativeTechSolutionBD",
-  description: "Grow your business with smart digital solutions.",
+  title: "Creative Tech Solution BD",
+  description: "Empowering Tomorrow with Creative Tech Solutions Today. Web Development, Digital Marketing, SEO & AI Solutions in Bangladesh.",
 };
 
 export default function RootLayout({

@@ -29,7 +29,14 @@ export default function BookingsPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void (async () => {
+      setLoading(true);
+      const res = await fetch('/api/admin/bookings', { headers: authHeaders() });
+      setRows(await res.json());
+      setLoading(false);
+    })();
+  }, []);
 
   async function updateStatus(id: number, status: string) {
     await fetch(`/api/admin/bookings/${id}`, {
@@ -51,7 +58,7 @@ export default function BookingsPage() {
           <h1 className="text-2xl font-extrabold text-white">Bookings</h1>
           <p className="text-slate-400 text-sm mt-1">{rows.length} total requests</p>
         </div>
-        <button onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
+        <button type="button" onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
@@ -94,18 +101,18 @@ export default function BookingsPage() {
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-1">
                       {b.status !== 'confirmed' && (
-                        <button onClick={() => updateStatus(b.id, 'confirmed')} title="Confirm"
+                        <button type="button" onClick={() => updateStatus(b.id, 'confirmed')} title="Confirm"
                           className="p-1.5 rounded-lg text-slate-500 hover:text-green-400 hover:bg-green-400/10 transition-colors">
                           <CheckCircle2 className="w-4 h-4" />
                         </button>
                       )}
                       {b.status !== 'cancelled' && (
-                        <button onClick={() => updateStatus(b.id, 'cancelled')} title="Cancel"
+                        <button type="button" onClick={() => updateStatus(b.id, 'cancelled')} title="Cancel"
                           className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-400/10 transition-colors">
                           <XCircle className="w-4 h-4" />
                         </button>
                       )}
-                      <button onClick={() => remove(b.id)} title="Delete"
+                      <button type="button" onClick={() => remove(b.id)} title="Delete"
                         className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>

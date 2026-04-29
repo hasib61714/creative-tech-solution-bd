@@ -1,4 +1,4 @@
-import { Target, Zap, Handshake, TrendingUp, Users, Globe, Search, Bot } from 'lucide-react';
+import { Target, Zap, Handshake, TrendingUp, Users } from 'lucide-react';
 import TopBar from '../../components/TopBar';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -11,10 +11,10 @@ const values = [
 ];
 
 const team = [
-  { name: 'A. Rahman', role: 'Founder & CEO',     bio: 'Digital strategist with 10+ years building brands online.' },
-  { name: 'S. Akter',  role: 'Lead Developer',    bio: 'Full-stack engineer specializing in React and Node.js.' },
-  { name: 'M. Hasan',  role: 'Head of SEO',       bio: 'Helped 50+ businesses rank on the first page of Google.' },
-  { name: 'T. Islam',  role: 'UI/UX Designer',    bio: 'Crafts interfaces that are both beautiful and conversion-focused.' },
+  { name: 'Md. Hasibul Hasan', role: 'Chief Executive Officer', bio: 'Digital entrepreneur leading Creative Tech Solution BD with a vision to empower businesses through technology.' },
+  { name: 'S. Akter',         role: 'Lead Developer',          bio: 'Full-stack engineer specializing in React and Node.js.' },
+  { name: 'M. Hasan',         role: 'Head of SEO',             bio: 'Helped 50+ businesses rank on the first page of Google.' },
+  { name: 'T. Islam',         role: 'UI/UX Designer',          bio: 'Crafts interfaces that are both beautiful and conversion-focused.' },
 ];
 
 const milestones = [
@@ -34,6 +34,8 @@ export default function AboutPage() {
       <section className="relative overflow-hidden bg-slate-950 py-24 px-6">
         <div className="absolute inset-0 bg-linear-to-r from-slate-950/60 via-slate-950/40 to-slate-950/50" />
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
+        <div className="absolute -top-40 -right-40 w-140 h-140 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
@@ -41,7 +43,7 @@ export default function AboutPage() {
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-6 max-w-3xl">
             We Build Digital Solutions That{' '}
-            <span className="bg-linear-to-r from-red-400 via-orange-300 to-amber-300 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
               Actually Work
             </span>
           </h1>
@@ -60,7 +62,7 @@ export default function AboutPage() {
               What We Stand For
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-              Our <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">Values</span>
+              Our <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Values</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -88,7 +90,7 @@ export default function AboutPage() {
               The People
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-              Meet the <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">Team</span>
+              Meet the <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Team</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -117,13 +119,13 @@ export default function AboutPage() {
               Our Journey
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-              How We <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">Got Here</span>
+              How We <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Got Here</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {milestones.map((m) => (
               <div key={m.year} className="group relative text-center p-6 rounded-2xl bg-white border border-slate-200 hover:border-red-500/20 transition-all duration-300 shadow-sm overflow-hidden">
-                <div className="text-3xl font-black text-transparent bg-linear-to-br from-red-500 via-orange-400 to-amber-300 bg-clip-text mb-2">{m.year}</div>
+                <div className="text-3xl font-black text-transparent bg-linear-to-br from-red-500 to-blue-600 bg-clip-text mb-2">{m.year}</div>
                 <div className="text-slate-900 font-semibold text-base mb-1">{m.title}</div>
                 <div className="text-slate-500 text-sm leading-relaxed">{m.desc}</div>
               </div>

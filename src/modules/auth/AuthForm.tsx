@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { LogIn, UserPlus } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthForm() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -43,9 +44,10 @@ export default function AuthForm() {
 
       <div className="relative w-full max-w-sm">
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <span className="w-9 h-9 bg-linear-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center text-white font-black shadow-lg shadow-red-600/20">C</span>
-          <span className="font-extrabold text-white text-lg">Creative<span className="text-red-400">Tech</span></span>
+        <Link href="/" className="flex justify-center mb-8">
+          <div className="bg-white rounded-xl px-4 py-2">
+            <Image src="/logopng.png" alt="Creative Tech Solution BD" width={485} height={130} className="h-10 w-auto" />
+          </div>
         </Link>
 
         {/* Badge */}
@@ -67,7 +69,7 @@ export default function AuthForm() {
                 key={m}
                 type="button"
                 onClick={() => switchMode(m)}
-                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${mode === m ? 'bg-linear-to-r from-red-600 to-red-700 text-white shadow-md shadow-red-600/20' : 'text-slate-400 hover:text-white'}`}
+                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${mode === m ? 'bg-linear-to-r from-red-600 to-blue-700 text-white shadow-md shadow-red-600/20' : 'text-slate-400 hover:text-white'}`}
               >
                 {m === 'login' ? 'Sign In' : 'Register'}
               </button>
@@ -90,7 +92,7 @@ export default function AuthForm() {
               <input type="password" placeholder="••••••••" className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm outline-none transition-colors" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required />
             </div>
 
-            <button type="submit" disabled={loading} className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 via-red-500 to-orange-500 text-white hover:from-red-500 hover:via-red-400 hover:to-orange-400 shadow-lg shadow-red-600/20 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed mt-1">
+            <button type="submit" disabled={loading} className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg shadow-red-600/20 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed mt-1">
               {loading ? 'Please wait...' : mode === 'login' ? <><LogIn className="w-4 h-4" /> Sign In</> : <><UserPlus className="w-4 h-4" /> Create Account</>}
             </button>
           </form>

@@ -25,7 +25,14 @@ export default function PortfolioAdminPage() {
     setRows(await res.json());
     setLoading(false);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void (async () => {
+      setLoading(true);
+      const res = await fetch('/api/admin/portfolio', { headers: authHeaders() });
+      setRows(await res.json());
+      setLoading(false);
+    })();
+  }, []);
 
   async function save() {
     if (!form.title) return;
@@ -59,8 +66,8 @@ export default function PortfolioAdminPage() {
           <h1 className="text-2xl font-extrabold text-white">Portfolio</h1>
           <p className="text-slate-400 text-sm mt-1">{rows.length} projects</p>
         </div>
-        <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-red-600 to-red-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-red-600 transition-all">
+        <button type="button" onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-blue-600 transition-all">
           <Plus className="w-4 h-4" /> Add Project
         </button>
       </div>
@@ -79,7 +86,7 @@ export default function PortfolioAdminPage() {
                   <div className="text-white font-bold text-sm">{p.title}</div>
                   {p.category && <div className="text-[10px] text-red-400 font-semibold uppercase tracking-widest mt-0.5">{p.category}</div>}
                 </div>
-                <button onClick={() => remove(p.id)} className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0">
+                <button type="button" onClick={() => remove(p.id)} title="Delete" className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -97,13 +104,13 @@ export default function PortfolioAdminPage() {
             <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white font-bold text-lg">Add Project</h2>
-              <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
+              <button type="button" onClick={() => setOpen(false)} title="Close" className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="flex flex-col gap-4">
               {field('title',  'Title',        'E-commerce Platform')}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Category</label>
-                <select className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
+                <select aria-label="Category" className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
                   value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}>
                   <option value="">Select…</option>
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -118,9 +125,9 @@ export default function PortfolioAdminPage() {
                   value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
               </div>
               <div className="flex gap-3 mt-2">
-                <button onClick={() => setOpen(false)} className="flex-1 py-2.5 rounded-xl border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">Cancel</button>
-                <button onClick={save} disabled={saving || !form.title}
-                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-red-700 text-white text-sm font-bold disabled:opacity-40 transition-all">
+                <button type="button" onClick={() => setOpen(false)} className="flex-1 py-2.5 rounded-xl border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">Cancel</button>
+                <button type="button" onClick={save} disabled={saving || !form.title}
+                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold disabled:opacity-40 transition-all">
                   {saving ? 'Saving...' : 'Save Project'}
                 </button>
               </div>

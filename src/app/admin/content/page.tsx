@@ -85,8 +85,8 @@ export default function ContentPage() {
           </div>
         ))}
 
-        <button onClick={save} disabled={saving}
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-red-600 to-red-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-red-600 disabled:opacity-50 transition-all mt-2">
+        <button type="button" onClick={save} disabled={saving}
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-blue-600 disabled:opacity-50 transition-all mt-2">
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
         </button>

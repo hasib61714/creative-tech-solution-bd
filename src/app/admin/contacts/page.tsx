@@ -20,7 +20,14 @@ export default function ContactsAdminPage() {
     setRows(await res.json());
     setLoading(false);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void (async () => {
+      setLoading(true);
+      const res = await fetch('/api/admin/contacts', { headers: authHeaders() });
+      setRows(await res.json());
+      setLoading(false);
+    })();
+  }, []);
 
   async function markRead(id: number) {
     await fetch('/api/admin/contacts', { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ id }) });
@@ -44,7 +51,7 @@ export default function ContactsAdminPage() {
             {rows.length} total{unread > 0 && <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/25">{unread} unread</span>}
           </p>
         </div>
-        <button onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
+        <button type="button" onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
@@ -73,7 +80,7 @@ export default function ContactsAdminPage() {
                       {m.subject && <div className="text-slate-400 text-xs font-medium mt-0.5">{m.subject}</div>}
                       <p className={`text-slate-400 text-sm mt-2 leading-relaxed ${expanded === m.id ? '' : 'line-clamp-2'}`}>{m.message}</p>
                       {m.message.length > 120 && (
-                        <button onClick={() => setExpanded(expanded === m.id ? null : m.id)}
+                        <button type="button" onClick={() => setExpanded(expanded === m.id ? null : m.id)}
                           className="text-xs text-red-400 hover:text-red-300 mt-1 transition-colors">
                           {expanded === m.id ? 'Show less' : 'Read more'}
                         </button>
@@ -82,12 +89,12 @@ export default function ContactsAdminPage() {
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     {!m.read && (
-                      <button onClick={() => markRead(m.id)} title="Mark as read"
+                      <button type="button" onClick={() => markRead(m.id)} title="Mark as read"
                         className="p-1.5 rounded-lg text-slate-500 hover:text-green-400 hover:bg-green-400/10 transition-colors">
                         <MailOpen className="w-4 h-4" />
                       </button>
                     )}
-                    <button onClick={() => remove(m.id)} title="Delete"
+                    <button type="button" onClick={() => remove(m.id)} title="Delete"
                       className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>

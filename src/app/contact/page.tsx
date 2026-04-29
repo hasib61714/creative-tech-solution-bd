@@ -7,9 +7,9 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
 const contactItems = [
-  { icon: Phone,   label: 'Phone',   value: '+880 1700-000000',       href: 'tel:+8801700000000' },
-  { icon: Mail,    label: 'Email',   value: 'info@creativetechbd.com', href: 'mailto:info@creativetechbd.com' },
-  { icon: MapPin,  label: 'Address', value: 'Dhaka, Bangladesh',       href: '#' },
+  { icon: Phone,   label: 'Phone',   value: '+8801784753468 / +8801794517497', href: 'tel:+8801784753468' },
+  { icon: Mail,    label: 'Email',   value: 'creativetechsolutionbd@gmail.com', href: 'mailto:creativetechsolutionbd@gmail.com' },
+  { icon: MapPin,  label: 'Address', value: 'Biharirpar, Gonopoddy-2151, Nakla, Sherpur, Mymensingh', href: '#' },
   { icon: Clock,   label: 'Hours',   value: 'Sat–Thu, 9am–7pm',        href: '#' },
 ];
 
@@ -54,13 +54,15 @@ export default function ContactPage() {
       <section className="relative overflow-hidden bg-slate-950 py-20">
         <div className="absolute inset-0 bg-linear-to-r from-slate-950/60 via-slate-950/40 to-slate-950/50" />
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
+        <div className="absolute -top-40 -right-40 w-140 h-140 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
             Get In Touch
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-4 max-w-2xl">
-            Let&apos;s <span className="bg-linear-to-r from-red-400 via-orange-300 to-amber-300 bg-clip-text text-transparent">Talk</span>
+            Let&apos;s <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Talk</span>
           </h1>
           <p className="text-slate-300 text-lg max-w-lg">Have a project in mind? Reach out and we&apos;ll reply within 24 hours.</p>
         </div>
@@ -83,7 +85,7 @@ export default function ContactPage() {
                   </div>
                 </a>
               ))}
-              <a href="https://wa.me/8801700000000" target="_blank" rel="noopener noreferrer"
+              <a href="https://wa.me/8801784753468" target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-xl font-semibold text-sm px-4 py-3 bg-[#25D366] hover:bg-[#1fad55] text-white transition-colors duration-200 shadow-md">
                 <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
               </a>
@@ -141,7 +143,7 @@ export default function ContactPage() {
                   {error && <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">{error}</div>}
 
                   <button type="submit" disabled={loading}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 via-red-500 to-orange-500 text-white hover:from-red-500 hover:via-red-400 hover:to-orange-400 shadow-lg shadow-red-600/20 transition-all duration-200 active:scale-95 disabled:opacity-50">
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg shadow-red-600/20 transition-all duration-200 active:scale-95 disabled:opacity-50">
                     <Send className="w-4 h-4" /> {loading ? 'Sending...' : 'Send Message'}
                   </button>
                 </>
@@ -152,7 +154,7 @@ export default function ContactPage() {
           {/* Map */}
           <div className="mt-8 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.902123!2d90.3912!3d23.7509!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDQ1JzA0LjMiTiA5MMKwMjMnMjguMyJF!5e0!3m2!1sen!2sbd!4v1610000000000!5m2!1sen!2sbd"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.0!2d90.0!3d24.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755d8e3a7a7a7a7%3A0x0!2sNakla%2C+Sherpur%2C+Mymensingh!5e0!3m2!1sen!2sbd!4v1710000000000!5m2!1sen!2sbd"
               width="100%" height="280" className="block border-0"
               allowFullScreen={false} loading="lazy"
               referrerPolicy="no-referrer-when-downgrade" title="Office Location"

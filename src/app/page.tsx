@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   Globe, TrendingUp, Search, Bot, Paintbrush, Headphones,
-  Zap, Rocket, Lock, DollarSign, BarChart2, Phone,
+  Zap, Rocket, Lock, DollarSign, BarChart2,
   ArrowRight, ChevronRight,
 } from 'lucide-react';
 import TopBar from '../components/TopBar';
@@ -51,15 +51,17 @@ export default function Home() {
         <div className="absolute inset-0 bg-linear-to-r from-slate-950/60 via-slate-950/40 to-slate-950/50" />
         <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-slate-950/50" />
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
+        <div className="absolute -top-40 -right-40 w-140 h-140 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-3xl py-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
               <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-              Verified Digital Agency — Dhaka, BD
+              Verified Digital Agency — Sherpur, BD
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.07] tracking-tight mb-6">
               Grow Your Business with{' '}
-              <span className="bg-linear-to-r from-red-400 via-orange-300 to-amber-300 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
                 Smart Digital
               </span>{' '}
               Solutions
@@ -68,7 +70,7 @@ export default function Home() {
               We help businesses across Bangladesh build powerful online presence, generate leads, and scale with technology.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/services" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 via-red-500 to-orange-500 text-white hover:from-red-500 hover:via-red-400 hover:to-orange-400 shadow-lg hover:shadow-orange-500/25 px-10 py-5 text-base active:scale-95">
+              <Link href="/services" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg hover:shadow-blue-700/25 px-10 py-5 text-base active:scale-95">
                 Explore Services <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-white/10 text-white border border-white/20 hover:bg-white/20 hover:border-white/30 px-10 py-5 text-base">
@@ -83,17 +85,17 @@ export default function Home() {
       <section className="py-14 lg:py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-slate-50 via-white to-slate-50 pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="w-full h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent mb-10" />
+          <div className="w-full h-px bg-linear-to-r from-red-500/30 via-transparent to-blue-500/30 mb-10" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {stats.map((s) => (
-              <div key={s.label} className="relative group text-center p-6 rounded-2xl bg-white border border-slate-200 hover:border-red-500/20 transition-all duration-300 overflow-hidden shadow-sm">
-                <div className="relative text-3xl lg:text-4xl font-black text-transparent bg-linear-to-br from-red-500 via-orange-400 to-amber-300 bg-clip-text mb-2">{s.value}</div>
+              <div key={s.label} className="relative group text-center p-6 rounded-2xl bg-white border border-slate-200 hover:border-blue-500/20 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md">
+                <div className="relative text-3xl lg:text-4xl font-black text-transparent bg-linear-to-br from-red-500 to-blue-600 bg-clip-text mb-2">{s.value}</div>
                 <div className="relative text-slate-900 font-semibold text-base mb-1">{s.label}</div>
                 <div className="relative text-slate-500 text-sm">{s.desc}</div>
               </div>
             ))}
           </div>
-          <div className="w-full h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent mt-10" />
+          <div className="w-full h-px bg-linear-to-r from-blue-500/30 via-transparent to-red-500/30 mt-10" />
         </div>
       </section>
 
@@ -106,7 +108,7 @@ export default function Home() {
               What We Do
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight mx-auto">
-              Our <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">Services</span>
+              Our <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Services</span>
             </h2>
             <p className="mt-4 text-slate-500 text-base leading-relaxed max-w-2xl mx-auto">
               Everything your business needs to grow online — delivered under one roof.
@@ -134,17 +136,17 @@ export default function Home() {
               Why Choose Us
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-              Why Businesses <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">Choose CreativeTech</span>
+              Why Businesses <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Choose CreativeTech</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {whyUs.map((w) => (
-              <div key={w.title} className="group flex gap-5 p-6 rounded-2xl bg-white border border-slate-100 hover:border-red-500/20 hover:-translate-y-0.5 transition-all duration-300 shadow-sm">
-                <div className="shrink-0 w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-red-500 group-hover:bg-red-500/15 group-hover:scale-105 transition-all duration-300">
+            {whyUs.map((w, i) => (
+              <div key={w.title} className={`group flex gap-5 p-6 rounded-2xl bg-white border border-slate-100 hover:-translate-y-0.5 transition-all duration-300 shadow-sm ${i % 2 === 0 ? 'hover:border-red-500/20' : 'hover:border-blue-500/20'}`}>
+                <div className={`shrink-0 w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center group-hover:scale-105 transition-all duration-300 ${i % 2 === 0 ? 'text-red-500 group-hover:bg-red-500/15' : 'text-blue-600 group-hover:bg-blue-500/15'}`}>
                   <w.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-slate-900 font-semibold text-sm mb-1.5 group-hover:text-red-500 transition-colors duration-200">{w.title}</div>
+                  <div className={`text-slate-900 font-semibold text-sm mb-1.5 transition-colors duration-200 ${i % 2 === 0 ? 'group-hover:text-red-600' : 'group-hover:text-blue-600'}`}>{w.title}</div>
                   <div className="text-slate-500 text-sm leading-relaxed">{w.desc}</div>
                 </div>
               </div>
@@ -163,17 +165,17 @@ export default function Home() {
               Our Process
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-              How It <span className="bg-linear-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">Works</span>
+              How It <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Works</span>
             </h2>
             <p className="mt-4 text-slate-500 text-base leading-relaxed max-w-2xl mx-auto">
               A simple, transparent process from first contact to final delivery.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {steps.map((step) => (
-              <div key={step.num} className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-red-500/20 hover:shadow-lg hover:shadow-red-500/5 hover:-translate-y-1 transition-all duration-300">
-                <div className="text-4xl font-black text-transparent bg-linear-to-br from-red-500 via-orange-400 to-amber-300 bg-clip-text mb-4">{step.num}</div>
-                <div className="font-bold text-slate-900 mb-2 group-hover:text-red-500 transition-colors">{step.title}</div>
+            {steps.map((step, i) => (
+              <div key={step.num} className={`group p-6 rounded-2xl bg-white border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${i % 2 === 0 ? 'hover:border-red-500/20 hover:shadow-red-500/5' : 'hover:border-blue-500/20 hover:shadow-blue-500/5'}`}>
+                <div className="text-4xl font-black text-transparent bg-linear-to-br from-red-500 to-blue-600 bg-clip-text mb-4">{step.num}</div>
+                <div className={`font-bold text-slate-900 mb-2 transition-colors ${i % 2 === 0 ? 'group-hover:text-red-600' : 'group-hover:text-blue-600'}`}>{step.title}</div>
                 <div className="text-sm text-slate-500 leading-relaxed">{step.desc}</div>
               </div>
             ))}
@@ -184,19 +186,21 @@ export default function Home() {
       {/* CTA */}
       <section className="py-14 lg:py-20 bg-slate-950 relative overflow-hidden">
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
+        <div className="absolute -top-32 left-1/4 w-120 h-120 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 right-1/4 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
             Free Consultation
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4">
-            Ready to <span className="bg-linear-to-r from-red-400 via-orange-300 to-amber-300 bg-clip-text text-transparent">Grow?</span>
+            Ready to <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Grow?</span>
           </h2>
           <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
             Book a free 30-minute call. No commitment — just clarity on how we can help.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 via-red-500 to-orange-500 text-white hover:from-red-500 hover:via-red-400 hover:to-orange-400 shadow-lg hover:shadow-orange-500/25 px-10 py-4 text-base active:scale-95">
+            <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg hover:shadow-blue-700/25 px-10 py-4 text-base active:scale-95">
               Book a Free Call <ArrowRight className="w-4 h-4" />
             </Link>
             <Link href="/contact" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-white/10 text-white border border-white/20 hover:bg-white/20 px-10 py-4 text-base">
