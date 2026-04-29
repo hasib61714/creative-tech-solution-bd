@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const m = require\\('c:/My Project/creativetechsolutionbd/node_modules/drizzle-orm/mysql-core'\\); console.log\\(Object.keys\\(m\\).filter\\(k => /bool|text|tiny/i.test\\(k\\)\\)\\)\")",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

@@ -1,4 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# CreativeTechSolutionBD
+
+## Database Setup (MariaDB + Drizzle ORM)
+
+1. Create a MariaDB database and user.
+2. Copy `.env.example` to `.env` and set your `DATABASE_URL`:
+   
+	```env
+	DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
+	```
+3. Run migration:
+   
+	```bash
+	npx tsx src/db/migrate.ts
+	```
+
+## Project Scripts
+
+- `npm run dev` — Start Next.js in development
+- `npm run build` — Build for production
+- `npm run start` — Start production server
+
+## ORM Usage
+- All database access is via Drizzle ORM (`src/db/`)
+- See `src/db/schema.ts` for table definitions
+- See `src/db/drizzle.ts` for connection setup
+
+---
+
+For more info, see Drizzle ORM docs: https://orm.drizzle.team/docs/overview
 
 ## Getting Started
 
