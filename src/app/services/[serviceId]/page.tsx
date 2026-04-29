@@ -4,6 +4,10 @@ import { CheckCircle2, ChevronRight, CalendarDays, MessageSquare } from 'lucide-
 import TopBar from '../../../components/TopBar';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
+import { getSiteContent } from '@/lib/content';
+import { db } from '@/db/drizzle';
+import { servicesTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 const SERVICES: Record<string, {
   title: string; category: string; desc: string;
@@ -124,9 +128,31 @@ export function generateStaticParams() {
   return Object.keys(SERVICES).map((serviceId) => ({ serviceId }));
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function ServiceDetailPage({ params }: { params: Promise<{ serviceId: string }> }) {
   const { serviceId } = await params;
-  const service = SERVICES[serviceId];
+  const content = await getSiteContent();
+  let service = SERVICES[serviceId];
+  try {
+    const [row] = await db.select().from(servicesTable).where(eq(servicesTable.slug, serviceId));
+    if (row?.active) {
+      service = {
+        title: row.title,
+        category: row.tag || 'Service',
+        desc: row.description || '',
+        benefits: (row.features || '').split('\n').map((item) => item.trim()).filter(Boolean),
+        packages: [
+          {
+            name: 'Starting Package',
+            price: row.fromPrice || 'Contact us',
+            features: (row.features || 'Custom plan\nFree consultation\nAdmin-managed service').split('\n').map((item) => item.trim()).filter(Boolean),
+            highlight: true,
+          },
+        ],
+      };
+    }
+  } catch {}
   if (!service) notFound();
 
   return (
@@ -173,7 +199,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
               {/* Process */}
               <div>
-                <h2 className="font-bold text-slate-900 text-lg mb-5">How It Works</h2>
+                <h2 className="font-bold text-slate-900 text-lg mb-5">{content.service_detail_process_heading}</h2>
                 <div className="flex flex-col gap-3">
                   {processSteps.map((step, i) => (
                     <div key={step} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-red-500/20 transition-colors">
@@ -186,7 +212,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
               {/* Pricing */}
               <div>
-                <h2 className="font-bold text-slate-900 text-lg mb-5">Pricing Packages</h2>
+                <h2 className="font-bold text-slate-900 text-lg mb-5">{content.service_detail_pricing_heading}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {service.packages.map((pkg) => (
                     <div key={pkg.name} className={`relative rounded-2xl p-5 flex flex-col gap-3 overflow-hidden ${pkg.highlight ? 'bg-linear-to-br from-slate-900 to-slate-800 border border-red-500/30' : 'bg-white border border-slate-200'}`}>
@@ -208,7 +234,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
               {/* FAQ */}
               <div>
-                <h2 className="font-bold text-slate-900 text-lg mb-5">FAQ</h2>
+                <h2 className="font-bold text-slate-900 text-lg mb-5">{content.service_detail_faq_heading}</h2>
                 <div className="flex flex-col gap-2">
                   {faqs.map((faq) => (
                     <details key={faq.q} className="bg-slate-50 border border-slate-200 hover:border-red-500/20 rounded-2xl group transition-colors">
@@ -231,8 +257,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse" />
                   Free Consultation
                 </div>
-                <h3 className="font-bold text-white text-lg mb-2">Book This Service</h3>
-                <p className="text-sm text-slate-400 mb-5">Schedule a free call and we&apos;ll walk you through the entire process.</p>
+                <h3 className="font-bold text-white text-lg mb-2">{content.service_detail_sidebar_title}</h3>
+                <p className="text-sm text-slate-400 mb-5">{content.service_detail_sidebar_subtitle}</p>
                 <Link href="/booking" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg shadow-red-600/20 transition-all duration-200 mb-3">
                   <CalendarDays className="w-4 h-4" /> Book a Free Call
                 </Link>

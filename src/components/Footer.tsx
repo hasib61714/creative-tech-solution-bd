@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail, MapPin } from 'lucide-react';
+import { useSiteContent } from '@/lib/useSiteContent';
 
 function IconFacebook() {
   return (
@@ -28,6 +31,7 @@ function IconYoutube() {
 }
 
 export default function Footer() {
+  const content = useSiteContent();
   return (
     <footer className="bg-slate-900 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -47,16 +51,16 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed mb-5">
-              Empowering Tomorrow with Creative Tech Solutions Today. Serving businesses across Bangladesh since 2020.
+              {content.brand_tagline}
             </p>
             <div className="flex gap-2">
-              <a href="#" title="Facebook" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-blue-600/20 hover:border-blue-500/40 hover:text-blue-400 transition-all duration-200">
+              <a href={content.social_facebook} title="Facebook" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-blue-600/20 hover:border-blue-500/40 hover:text-blue-400 transition-all duration-200">
                 <IconFacebook />
               </a>
-              <a href="#" title="LinkedIn" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-blue-600/20 hover:border-blue-500/40 hover:text-blue-400 transition-all duration-200">
+              <a href={content.social_linkedin} title="LinkedIn" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-blue-600/20 hover:border-blue-500/40 hover:text-blue-400 transition-all duration-200">
                 <IconLinkedin />
               </a>
-              <a href="#" title="YouTube" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-red-600/20 hover:border-red-500/40 hover:text-red-400 transition-all duration-200">
+              <a href={content.social_youtube} title="YouTube" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-red-600/20 hover:border-red-500/40 hover:text-red-400 transition-all duration-200">
                 <IconYoutube />
               </a>
             </div>
@@ -81,7 +85,6 @@ export default function Footer() {
                 { label: 'Portfolio',  href: '/portfolio' },
                 { label: 'Contact',    href: '/contact' },
                 { label: 'Book a Call',href: '/booking' },
-                { label: 'Sign In',    href: '/auth' },
               ].map((item) => (
                 <Link key={item.label} href={item.href} className="hover:text-white hover:translate-x-1 transition-all duration-200">{item.label}</Link>
               ))}
@@ -92,18 +95,18 @@ export default function Footer() {
           <div>
             <div className="text-xs font-bold uppercase tracking-widest text-red-400 mb-5">Contact</div>
             <div className="flex flex-col gap-3 text-sm text-slate-400">
-              <a href="tel:+8801784753468" className="flex items-center gap-2 hover:text-white transition-colors duration-200">
-                <Phone className="w-3.5 h-3.5 text-red-400 shrink-0" />+8801784753468
+              <a href={`tel:${content.contact_phone_primary}`} className="flex items-center gap-2 hover:text-white transition-colors duration-200">
+                <Phone className="w-3.5 h-3.5 text-red-400 shrink-0" />{content.contact_phone_primary}
               </a>
-              <a href="tel:+8801794517497" className="flex items-center gap-2 hover:text-white transition-colors duration-200">
-                <Phone className="w-3.5 h-3.5 text-red-400 shrink-0" />+8801794517497
+              <a href={`tel:${content.contact_phone_secondary}`} className="flex items-center gap-2 hover:text-white transition-colors duration-200">
+                <Phone className="w-3.5 h-3.5 text-red-400 shrink-0" />{content.contact_phone_secondary}
               </a>
-              <a href="mailto:creativetechsolutionbd@gmail.com" className="flex items-start gap-2 hover:text-white transition-colors duration-200 break-all">
-                <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />creativetechsolutionbd@gmail.com
+              <a href={`mailto:${content.contact_email}`} className="flex items-start gap-2 hover:text-white transition-colors duration-200 break-all">
+                <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />{content.contact_email}
               </a>
               <span className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
-                <span>Biharirpar, Gonopoddy-2151, Nakla, Sherpur, Mymensingh</span>
+                <span>{content.contact_address}</span>
               </span>
             </div>
           </div>
@@ -113,8 +116,8 @@ export default function Footer() {
 
       <div className="border-t border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-          <span className="text-xs text-slate-500">&copy; {new Date().getFullYear()} Creative Tech Solution BD. All rights reserved.</span>
-          <span className="text-xs text-slate-500">Made with ❤️ in Bangladesh</span>
+          <span className="text-xs text-slate-500">&copy; {new Date().getFullYear()} {content.brand_name}. All rights reserved.</span>
+          <span className="text-xs text-slate-500">Made in Bangladesh</span>
         </div>
       </div>
     </footer>

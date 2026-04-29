@@ -38,14 +38,8 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Button */}
           <div className="hidden xl:flex items-center gap-2 shrink-0">
-            <Link
-              href="/auth"
-              className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 text-slate-600 hover:border-red-300 hover:text-red-600 transition-all duration-200"
-            >
-              Sign In
-            </Link>
             <Link
               href="/booking"
               className="px-5 py-2 rounded-lg text-sm font-bold bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-md shadow-red-600/20 transition-all duration-200 active:scale-95"

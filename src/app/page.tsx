@@ -7,6 +7,7 @@ import {
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { getSiteContent, highlightText, parseListRows } from '@/lib/content';
 
 const services = [
   { icon: Globe,       title: 'Web Development',   desc: 'Fast, modern websites & web apps tailored to your business goals.',             tag: 'Popular' },
@@ -15,13 +16,6 @@ const services = [
   { icon: Bot,         title: 'AI Solutions',       desc: 'Automate workflows and gain insights with custom AI tools.',                    tag: 'New' },
   { icon: Paintbrush,  title: 'UI/UX Design',       desc: 'Beautiful, intuitive designs that turn visitors into customers.',               tag: '' },
   { icon: Headphones,  title: '24/7 Support',       desc: 'Dedicated technical support keeping your business running always.',             tag: '' },
-];
-
-const stats = [
-  { value: '100+', label: 'Happy Clients',   desc: 'Businesses trust us' },
-  { value: '500+', label: 'Projects Done',   desc: 'Across all services' },
-  { value: '95%',  label: 'Satisfaction',    desc: 'Client success rate' },
-  { value: '24/7', label: 'Support',         desc: 'Always available' },
 ];
 
 const whyUs = [
@@ -40,7 +34,13 @@ const steps = [
   { num: '04', title: 'Grow & Scale',    desc: 'We monitor results, optimize performance, and help you scale further.' },
 ];
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  const content = await getSiteContent();
+  const heroTitle = highlightText(content.home_hero_title, content.home_hero_highlight);
+  const stats = parseListRows(content.home_stats).map(([value, label, desc]) => ({ value, label, desc }));
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <TopBar />
@@ -57,24 +57,26 @@ export default function Home() {
           <div className="max-w-3xl py-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
               <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-              Verified Digital Agency — Sherpur, BD
+              {content.home_badge}
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.07] tracking-tight mb-6">
-              Grow Your Business with{' '}
-              <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
-                Smart Digital
-              </span>{' '}
-              Solutions
+              {heroTitle.before}
+              {heroTitle.highlight && (
+                <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
+                  {heroTitle.highlight}
+                </span>
+              )}
+              {heroTitle.after}
             </h1>
             <p className="text-slate-300 text-lg sm:text-xl leading-relaxed max-w-xl mb-10">
-              We help businesses across Bangladesh build powerful online presence, generate leads, and scale with technology.
+              {content.home_hero_subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/services" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg hover:shadow-blue-700/25 px-10 py-5 text-base active:scale-95">
-                Explore Services <ArrowRight className="w-4 h-4" />
+                {content.home_primary_cta} <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-white/10 text-white border border-white/20 hover:bg-white/20 hover:border-white/30 px-10 py-5 text-base">
-                Book a Free Call
+                {content.home_secondary_cta}
               </Link>
             </div>
           </div>
@@ -108,10 +110,10 @@ export default function Home() {
               What We Do
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight mx-auto">
-              Our <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Services</span>
+              {content.home_services_heading}
             </h2>
             <p className="mt-4 text-slate-500 text-base leading-relaxed max-w-2xl mx-auto">
-              Everything your business needs to grow online — delivered under one roof.
+              {content.home_services_subtitle}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
@@ -136,7 +138,7 @@ export default function Home() {
               Why Choose Us
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-              Why Businesses <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Choose CreativeTech</span>
+              {content.home_why_heading}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -165,7 +167,7 @@ export default function Home() {
               Our Process
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-              How It <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Works</span>
+              {content.home_process_heading}
             </h2>
             <p className="mt-4 text-slate-500 text-base leading-relaxed max-w-2xl mx-auto">
               A simple, transparent process from first contact to final delivery.
@@ -191,17 +193,17 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            Free Consultation
+            {content.home_cta_badge}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4">
-            Ready to <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Grow?</span>
+            {content.home_cta_title}
           </h2>
           <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
-            Book a free 30-minute call. No commitment — just clarity on how we can help.
+            {content.home_cta_subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg hover:shadow-blue-700/25 px-10 py-4 text-base active:scale-95">
-              Book a Free Call <ArrowRight className="w-4 h-4" />
+              {content.home_secondary_cta} <ArrowRight className="w-4 h-4" />
             </Link>
             <Link href="/contact" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-white/10 text-white border border-white/20 hover:bg-white/20 px-10 py-4 text-base">
               Contact Us

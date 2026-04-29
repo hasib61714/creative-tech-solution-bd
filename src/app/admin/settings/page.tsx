@@ -4,20 +4,21 @@ import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 
 type Fields = {
-  phone: string; email: string; address: string; whatsapp: string;
-  facebook: string; linkedin: string; youtube: string;
-  business_hours: string; map_embed: string;
+  contact_phone_primary: string; contact_phone_secondary: string; contact_email: string; contact_address: string; whatsapp_number: string;
+  social_facebook: string; social_linkedin: string; social_youtube: string;
+  contact_hours: string; map_embed: string;
 };
 
 const DEFAULTS: Fields = {
-  phone:          '+880 1700-000000',
-  email:          'info@creativetechbd.com',
-  address:        'Dhaka, Bangladesh',
-  whatsapp:       '8801700000000',
-  facebook:       '',
-  linkedin:       '',
-  youtube:        '',
-  business_hours: 'Sat–Thu, 9am–7pm',
+  contact_phone_primary:   '+8801784753468',
+  contact_phone_secondary: '+8801794517497',
+  contact_email:           'creativetechsolutionbd@gmail.com',
+  contact_address:         'Biharirpar, Gonopoddy-2151, Nakla, Sherpur, Mymensingh',
+  whatsapp_number:         '8801784753468',
+  social_facebook:         '',
+  social_linkedin:         '',
+  social_youtube:          '',
+  contact_hours: 'Sat-Thu, 9am-7pm',
   map_embed:      '',
 };
 
@@ -25,19 +26,20 @@ const GROUPS = [
   {
     title: 'Contact Information',
     fields: [
-      { key: 'phone',          label: 'Phone Number',     placeholder: '+880 1700-000000' },
-      { key: 'email',          label: 'Email Address',    placeholder: 'info@yoursite.com' },
-      { key: 'address',        label: 'Office Address',   placeholder: 'Dhaka, Bangladesh' },
-      { key: 'business_hours', label: 'Business Hours',   placeholder: 'Sat–Thu, 9am–7pm' },
-      { key: 'whatsapp',       label: 'WhatsApp Number',  placeholder: '8801700000000' },
+      { key: 'contact_phone_primary',   label: 'Primary Phone',    placeholder: '+8801784753468' },
+      { key: 'contact_phone_secondary', label: 'Secondary Phone',  placeholder: '+8801794517497' },
+      { key: 'contact_email',           label: 'Email Address',    placeholder: 'info@yoursite.com' },
+      { key: 'contact_address',         label: 'Office Address',   placeholder: 'Dhaka, Bangladesh' },
+      { key: 'contact_hours', label: 'Business Hours',   placeholder: 'Sat-Thu, 9am-7pm' },
+      { key: 'whatsapp_number', label: 'WhatsApp Number',  placeholder: '8801784753468' },
     ],
   },
   {
     title: 'Social Media Links',
     fields: [
-      { key: 'facebook',  label: 'Facebook URL',  placeholder: 'https://facebook.com/...' },
-      { key: 'linkedin',  label: 'LinkedIn URL',  placeholder: 'https://linkedin.com/...' },
-      { key: 'youtube',   label: 'YouTube URL',   placeholder: 'https://youtube.com/...' },
+      { key: 'social_facebook', label: 'Facebook URL',  placeholder: 'https://facebook.com/...' },
+      { key: 'social_linkedin', label: 'LinkedIn URL',  placeholder: 'https://linkedin.com/...' },
+      { key: 'social_youtube',  label: 'YouTube URL',   placeholder: 'https://youtube.com/...' },
     ],
   },
   {

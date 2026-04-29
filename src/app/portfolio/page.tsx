@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import TopBar from '../../components/TopBar';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { useSiteContent } from '@/lib/useSiteContent';
 
 const categories = ['All', 'Web', 'Marketing', 'Design'];
 
-const projects = [
+type Project = { title: string; category?: string; metric?: string; tag?: string; description?: string; desc?: string };
+
+const fallbackProjects: Project[] = [
   { title: 'E-commerce Platform',   category: 'Web',       metric: '2x Sales Growth',    tag: 'Next.js · MySQL',        desc: 'Full-featured online store with admin dashboard and payment integration.' },
   { title: 'Brand Website',          category: 'Web',       metric: '+300% Traffic',       tag: 'React · Tailwind',       desc: 'Modern corporate website with CMS and multilingual support.' },
   { title: 'AI Chatbot',             category: 'Web',       metric: '24/7 Automation',     tag: 'Python · OpenAI',        desc: 'Intelligent support bot that handles 80% of queries automatically.' },
@@ -19,7 +22,22 @@ const projects = [
 
 export default function PortfolioPage() {
   const [active, setActive] = useState('All');
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+  const content = useSiteContent();
   const filtered = active === 'All' ? projects : projects.filter((p) => p.category === active);
+
+  useEffect(() => {
+    let activeRequest = true;
+    fetch('/api/portfolio')
+      .then((res) => res.json())
+      .then((rows: Project[]) => {
+        if (activeRequest && rows.length) setProjects(rows);
+      })
+      .catch(() => {});
+    return () => {
+      activeRequest = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
@@ -35,13 +53,18 @@ export default function PortfolioPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            Our Work
+            {content.portfolio_badge}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-4 max-w-2xl">
-            <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Real Results</span>{' '}
-            for Real Businesses
+            {content.portfolio_title.includes(content.portfolio_highlight) ? (
+              <>
+                {content.portfolio_title.split(content.portfolio_highlight)[0]}
+                <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">{content.portfolio_highlight}</span>
+                {content.portfolio_title.split(content.portfolio_highlight).slice(1).join(content.portfolio_highlight)}
+              </>
+            ) : content.portfolio_title}
           </h1>
-          <p className="text-slate-300 text-lg max-w-lg">Every project has a measurable, verifiable impact on the client&apos;s business.</p>
+          <p className="text-slate-300 text-lg max-w-lg">{content.portfolio_subtitle}</p>
         </div>
       </section>
 
@@ -68,7 +91,7 @@ export default function PortfolioPage() {
                   <div className="text-[10px] text-slate-500 font-mono">{p.tag}</div>
                   <div className="text-white font-bold text-base group-hover:text-red-400 transition-colors">{p.title}</div>
                   <div className="text-sm font-bold text-transparent bg-linear-to-r from-red-400 to-blue-400 bg-clip-text">{p.metric}</div>
-                  <p className="text-slate-400 text-sm leading-relaxed flex-1">{p.desc}</p>
+                  <p className="text-slate-400 text-sm leading-relaxed flex-1">{p.description || p.desc}</p>
                   <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     View Details <ChevronRight className="w-3 h-3" />
                   </div>

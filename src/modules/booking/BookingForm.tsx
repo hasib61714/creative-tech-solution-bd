@@ -4,11 +4,13 @@ import { useState, Fragment } from 'react';
 import { Check, ChevronRight, ArrowLeft, CalendarCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSiteContent } from '@/lib/useSiteContent';
 
 const services = ['Web Development', 'Digital Marketing', 'SEO', 'AI Solutions', 'UI/UX Design', '24/7 Support'];
 const steps = ['Service', 'Your Info', 'Date & Time', 'Confirm'];
 
 export default function BookingForm() {
+  const content = useSiteContent();
   const [step, setStep] = useState(0);
   const [selectedService, setSelectedService] = useState('');
   const [info, setInfo] = useState({ name: '', email: '', phone: '', details: '' });
@@ -55,7 +57,7 @@ export default function BookingForm() {
       {/* Top bar */}
       <header className="relative z-10 flex items-center justify-end px-6 sm:px-10 py-4 border-b border-white/6 shrink-0">
         <Link href="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-          ← Back to Home
+          ← {content.booking_back_label}
         </Link>
       </header>
 
@@ -70,12 +72,12 @@ export default function BookingForm() {
               <div className="w-16 h-16 rounded-full bg-linear-to-br from-red-600 to-blue-700 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-red-600/20">
                 <CalendarCheck className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-2xl font-extrabold text-white mb-2">Booking Confirmed!</h2>
+                <h2 className="text-2xl font-extrabold text-white mb-2">{content.booking_success_title}</h2>
               <p className="text-slate-400 text-sm leading-relaxed mb-1">
                 Thank you, <span className="text-white font-semibold">{info.name}</span>.
               </p>
               <p className="text-slate-400 text-sm leading-relaxed mb-8">
-                We&apos;ll contact you at <span className="text-white font-semibold">{info.email}</span> within 24 hours to confirm your{' '}
+                {content.booking_success_text} We&apos;ll use <span className="text-white font-semibold">{info.email}</span> for your{' '}
                 <span className="text-white font-semibold">{selectedService}</span> consultation.
               </p>
               <div className="bg-slate-800/60 border border-white/8 rounded-xl p-4 mb-8 text-left flex flex-col gap-2.5 text-sm max-w-sm mx-auto">
@@ -93,7 +95,7 @@ export default function BookingForm() {
               <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
                 <Link href="/"
                   className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg shadow-red-600/20 transition-all duration-200 active:scale-95">
-                  Back to Home <ArrowRight className="w-4 h-4" />
+                {content.booking_back_label} <ArrowRight className="w-4 h-4" />
                 </Link>
                 <button type="button" onClick={startOver}
                   className="flex-1 py-3 rounded-xl text-sm font-semibold border border-white/8 text-slate-400 hover:text-white hover:border-white/20 transition-all duration-200">
@@ -114,8 +116,8 @@ export default function BookingForm() {
 
               {/* ── Page Title ── */}
               <div className="text-center mb-8">
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">Book a Service</h1>
-                <p className="text-slate-400 text-sm">No commitment required — just a conversation.</p>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">{content.booking_title}</h1>
+                <p className="text-slate-400 text-sm">{content.booking_subtitle}</p>
               </div>
 
               {/* ── Step Indicators ── */}
@@ -152,7 +154,7 @@ export default function BookingForm() {
                   <div className="flex justify-center mb-6">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                      Free Consultation
+                      {content.booking_badge}
                     </div>
                   </div>
 

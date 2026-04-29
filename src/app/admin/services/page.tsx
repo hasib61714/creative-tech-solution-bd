@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, ToggleLeft, ToggleRight, X } from 'lucide-react';
+import { Pencil, Plus, Trash2, ToggleLeft, ToggleRight, X } from 'lucide-react';
 
 type Service = {
   id: number; title: string; slug: string; description?: string;
@@ -23,6 +23,7 @@ export default function ServicesAdminPage() {
   const [open, setOpen]     = useState(false);
   const [form, setForm]     = useState<Form>(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState<Service | null>(null);
 
   async function load() {
     setLoading(true);
@@ -42,11 +43,29 @@ export default function ServicesAdminPage() {
   async function save() {
     if (!form.title || !form.slug) return;
     setSaving(true);
-    await fetch('/api/admin/services', { method: 'POST', headers: authHeaders(), body: JSON.stringify(form) });
+    await fetch(editing ? `/api/admin/services/${editing.id}` : '/api/admin/services', {
+      method: editing ? 'PUT' : 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ ...form, active: editing?.active ?? true }),
+    });
     setSaving(false);
     setOpen(false);
+    setEditing(null);
     setForm(EMPTY);
     load();
+  }
+
+  function startEdit(service: Service) {
+    setEditing(service);
+    setForm({
+      title: service.title,
+      slug: service.slug,
+      description: service.description || '',
+      features: service.features || '',
+      fromPrice: service.fromPrice || '',
+      tag: service.tag || '',
+    });
+    setOpen(true);
   }
 
   async function toggleActive(s: Service) {
@@ -70,7 +89,7 @@ export default function ServicesAdminPage() {
           <h1 className="text-2xl font-extrabold text-white">Services</h1>
           <p className="text-slate-400 text-sm mt-1">{rows.length} services</p>
         </div>
-        <button type="button" onClick={() => setOpen(true)}
+        <button type="button" onClick={() => { setEditing(null); setForm(EMPTY); setOpen(true); }}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-blue-600 transition-all">
           <Plus className="w-4 h-4" /> Add Service
         </button>
@@ -110,6 +129,10 @@ export default function ServicesAdminPage() {
                         className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-400/10 transition-colors">
                         {s.active ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
                       </button>
+                      <button type="button" onClick={() => startEdit(s)} title="Edit"
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-blue-400 hover:bg-blue-400/10 transition-colors">
+                        <Pencil className="w-4 h-4" />
+                      </button>
                       <button type="button" onClick={() => remove(s.id)} title="Delete"
                         className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors">
                         <Trash2 className="w-4 h-4" />
@@ -129,8 +152,8 @@ export default function ServicesAdminPage() {
           <div className="relative w-full max-w-lg bg-linear-to-br from-slate-900 to-slate-800 border border-white/8 rounded-2xl p-7 overflow-hidden">
             <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white font-bold text-lg">Add Service</h2>
-              <button type="button" onClick={() => setOpen(false)} title="Close" className="text-slate-400 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
+              <h2 className="text-white font-bold text-lg">{editing ? 'Edit Service' : 'Add Service'}</h2>
+              <button type="button" onClick={() => { setOpen(false); setEditing(null); setForm(EMPTY); }} title="Close" className="text-slate-400 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
             </div>
             <div className="flex flex-col gap-4">
               {[
@@ -162,11 +185,17 @@ export default function ServicesAdminPage() {
                   className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors resize-none"
                   value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
               </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Features</label>
+                <textarea rows={4} placeholder="One feature per line..."
+                  className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white placeholder-slate-500 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors resize-none"
+                  value={form.features} onChange={(e) => setForm((f) => ({ ...f, features: e.target.value }))} />
+              </div>
               <div className="flex gap-3 mt-2">
-                <button type="button" onClick={() => setOpen(false)} className="flex-1 py-2.5 rounded-xl border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">Cancel</button>
+                <button type="button" onClick={() => { setOpen(false); setEditing(null); setForm(EMPTY); }} className="flex-1 py-2.5 rounded-xl border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">Cancel</button>
                 <button type="button" onClick={save} disabled={saving || !form.title || !form.slug}
                   className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold disabled:opacity-40 transition-all">
-                  {saving ? 'Saving...' : 'Save Service'}
+                  {saving ? 'Saving...' : editing ? 'Update Service' : 'Save Service'}
                 </button>
               </div>
             </div>

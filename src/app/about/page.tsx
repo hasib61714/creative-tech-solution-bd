@@ -2,6 +2,7 @@ import { Target, Zap, Handshake, TrendingUp, Users } from 'lucide-react';
 import TopBar from '../../components/TopBar';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { getSiteContent, highlightText } from '@/lib/content';
 
 const values = [
   { icon: Target,     title: 'Client Success First',  desc: 'Your growth is our only metric of success. We win when you win.' },
@@ -24,7 +25,12 @@ const milestones = [
   { year: '2024', title: '100+ Clients',desc: 'Serving businesses nationwide with a 95% satisfaction rate.' },
 ];
 
-export default function AboutPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function AboutPage() {
+  const content = await getSiteContent();
+  const title = highlightText(content.about_title, content.about_highlight);
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <TopBar />
@@ -39,16 +45,19 @@ export default function AboutPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            About Us
+            {content.about_badge}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-6 max-w-3xl">
-            We Build Digital Solutions That{' '}
-            <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
-              Actually Work
-            </span>
+            {title.before}
+            {title.highlight && (
+              <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
+                {title.highlight}
+              </span>
+            )}
+            {title.after}
           </h1>
           <p className="text-slate-300 text-lg leading-relaxed max-w-xl">
-            Founded in 2020, CreativeTechSolutionBD has helped 100+ businesses across Bangladesh grow their digital presence and revenue.
+            {content.about_subtitle}
           </p>
         </div>
       </section>
@@ -62,7 +71,7 @@ export default function AboutPage() {
               What We Stand For
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-              Our <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Values</span>
+              {content.about_values_heading}
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -90,7 +99,7 @@ export default function AboutPage() {
               The People
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-              Meet the <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Team</span>
+              {content.about_team_heading}
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -119,7 +128,7 @@ export default function AboutPage() {
               Our Journey
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900">
-              How We <span className="bg-linear-to-r from-red-500 to-blue-600 bg-clip-text text-transparent">Got Here</span>
+              {content.about_journey_heading}
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

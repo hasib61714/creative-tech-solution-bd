@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/drizzle';
 import { bookings, servicesTable, portfolioItems, testimonials, contactMessages } from '@/db/schema';
-import { verifyToken } from '@/lib/auth';
+import { requirePermission, unauthorized } from '@/lib/auth';
 import { eq, count } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
-  if (!verifyToken(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await requirePermission(req, 'dashboard'))) return unauthorized();
 
   const [[bTotal], [bPending], [sTotal], [pTotal], [tPending], [cUnread]] = await Promise.all([
     db.select({ n: count() }).from(bookings),

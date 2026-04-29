@@ -3,6 +3,10 @@ import { Globe, TrendingUp, Search, Bot, Paintbrush, Headphones, ChevronRight } 
 import TopBar from '../../components/TopBar';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { getSiteContent } from '@/lib/content';
+import { db } from '@/db/drizzle';
+import { servicesTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 const services = [
   { id: 'web-development', icon: Globe,      title: 'Web Development',  tag: 'Popular', desc: 'Fast, scalable websites and web applications built with modern technologies.', features: ['Custom Next.js / React apps', 'E-commerce stores', 'Admin dashboards', 'API integrations'], from: '৳15,000' },
@@ -13,7 +17,28 @@ const services = [
   { id: 'support',         icon: Headphones, title: '24/7 Support',      tag: '',        desc: 'Dedicated technical support and maintenance to keep your business running.',      features: ['Bug fixes', 'Performance monitoring', 'Security updates', 'Priority response'], from: '৳3,000/mo' },
 ];
 
-export default function ServiceList() {
+async function getServices() {
+  try {
+    const rows = await db.select().from(servicesTable).where(eq(servicesTable.active, true));
+    if (!rows.length) return services;
+    return rows.map((row, index) => ({
+      id: row.slug,
+      icon: services[index % services.length].icon,
+      title: row.title,
+      tag: row.tag || '',
+      desc: row.description || '',
+      features: (row.features || '').split('\n').map((f) => f.trim()).filter(Boolean),
+      from: row.fromPrice || 'Contact us',
+    }));
+  } catch {
+    return services;
+  }
+}
+
+export default async function ServiceList() {
+  const content = await getSiteContent();
+  const visibleServices = await getServices();
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <TopBar />
@@ -28,12 +53,12 @@ export default function ServiceList() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            What We Offer
+            {content.services_badge}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-4 max-w-2xl">
-            Our <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Services</span>
+            {content.services_title}
           </h1>
-          <p className="text-slate-300 text-lg max-w-lg">Everything your business needs to grow online — delivered under one roof.</p>
+          <p className="text-slate-300 text-lg max-w-lg">{content.services_subtitle}</p>
         </div>
       </section>
 
@@ -41,7 +66,7 @@ export default function ServiceList() {
       <section className="py-14 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {services.map((s) => (
+            {visibleServices.map((s) => (
               <div key={s.id} className="group relative flex flex-col bg-linear-to-br from-slate-900 to-slate-800 border border-white/8 rounded-2xl p-7 hover:border-red-500/30 hover:shadow-2xl hover:shadow-red-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute top-0 right-0 w-40 h-40 bg-red-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-red-500/10 transition-colors duration-500" />

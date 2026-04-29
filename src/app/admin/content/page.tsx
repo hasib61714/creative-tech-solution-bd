@@ -2,50 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
-
-type Fields = {
-  hero_headline: string; hero_sub: string;
-  stat_projects: string; stat_clients: string; stat_years: string; stat_satisfaction: string;
-  cta_headline: string; cta_sub: string;
-};
-
-const DEFAULTS: Fields = {
-  hero_headline:    'Grow Your Business with Smart Digital Solutions',
-  hero_sub:         'We build websites, run marketing campaigns, and automate workflows — so you can focus on running your business.',
-  stat_projects:    '150+',
-  stat_clients:     '80+',
-  stat_years:       '5',
-  stat_satisfaction:'98%',
-  cta_headline:     'Ready to Grow Your Business?',
-  cta_sub:          'Book a free 30-minute strategy call and get a custom plan for your business.',
-};
-
-const FIELDS: { key: keyof Fields; label: string; multi?: boolean }[] = [
-  { key: 'hero_headline',    label: 'Hero Headline' },
-  { key: 'hero_sub',         label: 'Hero Subtext', multi: true },
-  { key: 'stat_projects',    label: 'Projects Stat (e.g. 150+)' },
-  { key: 'stat_clients',     label: 'Clients Stat (e.g. 80+)' },
-  { key: 'stat_years',       label: 'Years Stat (e.g. 5)' },
-  { key: 'stat_satisfaction',label: 'Satisfaction Stat (e.g. 98%)' },
-  { key: 'cta_headline',     label: 'CTA Headline' },
-  { key: 'cta_sub',          label: 'CTA Subtext', multi: true },
-];
+import { CONTENT_DEFAULTS, CONTENT_GROUPS, SiteContent } from '@/lib/content-defaults';
 
 function authHeaders() {
   return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
 }
 
 export default function ContentPage() {
-  const [form, setForm]     = useState<Fields>(DEFAULTS);
+  const [form, setForm] = useState<SiteContent>({ ...CONTENT_DEFAULTS });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving]   = useState(false);
-  const [saved, setSaved]     = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/settings', { headers: authHeaders() })
       .then((r) => r.json())
       .then((data) => {
-        setForm((f) => ({ ...f, ...Object.fromEntries(Object.entries(data).filter(([k]) => k in DEFAULTS)) } as Fields));
+        setForm((f) => ({ ...f, ...Object.fromEntries(Object.entries(data).filter(([k]) => k in CONTENT_DEFAULTS)) } as SiteContent));
         setLoading(false);
       });
   }, []);
@@ -63,32 +36,42 @@ export default function ContentPage() {
   );
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-white">Homepage Content</h1>
-        <p className="text-slate-400 text-sm mt-1">Edit the text that appears on your homepage.</p>
+        <h1 className="text-2xl font-extrabold text-white">Website Content</h1>
+        <p className="text-slate-400 text-sm mt-1">Control public page text, contact details, footer content, and page headings.</p>
       </div>
 
-      <div className="relative bg-linear-to-br from-slate-900 to-slate-800 border border-white/8 rounded-2xl p-7 flex flex-col gap-5 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
+      <div className="flex flex-col gap-5">
+        {CONTENT_GROUPS.map((group) => (
+          <section key={group.title} className="relative bg-linear-to-br from-slate-900 to-slate-800 border border-white/8 rounded-2xl p-7 overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
+            <div className="mb-6">
+              <h2 className="text-white font-bold text-base">{group.title}</h2>
+              <p className="text-slate-500 text-xs mt-1">{group.description}</p>
+            </div>
 
-        {FIELDS.map(({ key, label, multi }) => (
-          <div key={key} className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">{label}</label>
-            {multi ? (
-              <textarea rows={3} className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-3 text-sm outline-none transition-colors resize-none"
-                value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
-            ) : (
-              <input type="text" className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-3 text-sm outline-none transition-colors"
-                value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
-            )}
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {group.fields.map(({ key, label, multi }) => (
+                <div key={key} className={`flex flex-col gap-1.5 ${multi ? 'md:col-span-2' : ''}`}>
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">{label}</label>
+                  {multi ? (
+                    <textarea rows={4} className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-3 text-sm outline-none transition-colors resize-y min-h-24"
+                      value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
+                  ) : (
+                    <input type="text" className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-3 text-sm outline-none transition-colors"
+                      value={form[key]} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} />
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
         ))}
 
         <button type="button" onClick={save} disabled={saving}
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-blue-600 disabled:opacity-50 transition-all mt-2">
+          className="sticky bottom-4 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-red-600 to-blue-700 text-white text-sm font-bold shadow-lg shadow-red-600/20 hover:from-red-500 hover:to-blue-600 disabled:opacity-50 transition-all">
           <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
+          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save All Content'}
         </button>
       </div>
     </div>

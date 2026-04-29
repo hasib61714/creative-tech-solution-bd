@@ -5,18 +5,13 @@ import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import TopBar from '../../components/TopBar';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-
-const contactItems = [
-  { icon: Phone,   label: 'Phone',   value: '+8801784753468 / +8801794517497', href: 'tel:+8801784753468' },
-  { icon: Mail,    label: 'Email',   value: 'creativetechsolutionbd@gmail.com', href: 'mailto:creativetechsolutionbd@gmail.com' },
-  { icon: MapPin,  label: 'Address', value: 'Biharirpar, Gonopoddy-2151, Nakla, Sherpur, Mymensingh', href: '#' },
-  { icon: Clock,   label: 'Hours',   value: 'Sat–Thu, 9am–7pm',        href: '#' },
-];
+import { useSiteContent } from '@/lib/useSiteContent';
 
 type Form = { name: string; email: string; subject: string; message: string };
 const EMPTY: Form = { name: '', email: '', subject: '', message: '' };
 
 export default function ContactPage() {
+  const content = useSiteContent();
   const [form, setForm]       = useState<Form>(EMPTY);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -45,6 +40,13 @@ export default function ContactPage() {
     }
   }
 
+  const contactItems = [
+    { icon: Phone,   label: 'Phone',   value: `${content.contact_phone_primary} / ${content.contact_phone_secondary}`, href: `tel:${content.contact_phone_primary}` },
+    { icon: Mail,    label: 'Email',   value: content.contact_email, href: `mailto:${content.contact_email}` },
+    { icon: MapPin,  label: 'Address', value: content.contact_address, href: '#' },
+    { icon: Clock,   label: 'Hours',   value: content.contact_hours, href: '#' },
+  ];
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <TopBar />
@@ -59,12 +61,18 @@ export default function ContactPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            Get In Touch
+            {content.contact_badge}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.07] tracking-tight mb-4 max-w-2xl">
-            Let&apos;s <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">Talk</span>
+            {content.contact_title.includes(content.contact_highlight) ? (
+              <>
+                {content.contact_title.split(content.contact_highlight)[0]}
+                <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">{content.contact_highlight}</span>
+                {content.contact_title.split(content.contact_highlight).slice(1).join(content.contact_highlight)}
+              </>
+            ) : content.contact_title}
           </h1>
-          <p className="text-slate-300 text-lg max-w-lg">Have a project in mind? Reach out and we&apos;ll reply within 24 hours.</p>
+          <p className="text-slate-300 text-lg max-w-lg">{content.contact_subtitle}</p>
         </div>
       </section>
 
@@ -85,7 +93,7 @@ export default function ContactPage() {
                   </div>
                 </a>
               ))}
-              <a href="https://wa.me/8801784753468" target="_blank" rel="noopener noreferrer"
+              <a href={`https://wa.me/${content.whatsapp_number}`} target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-xl font-semibold text-sm px-4 py-3 bg-[#25D366] hover:bg-[#1fad55] text-white transition-colors duration-200 shadow-md">
                 <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
               </a>
@@ -101,8 +109,8 @@ export default function ContactPage() {
                     <Send className="w-6 h-6 text-green-400" />
                   </div>
                   <div>
-                    <div className="text-white font-bold text-lg mb-1">Message Sent!</div>
-                    <p className="text-slate-400 text-sm">We&apos;ll get back to you within 24 hours.</p>
+                    <div className="text-white font-bold text-lg mb-1">{content.contact_success_title}</div>
+                    <p className="text-slate-400 text-sm">{content.contact_success_text}</p>
                   </div>
                   <button type="button" onClick={() => setSuccess(false)}
                     className="text-xs text-red-400 hover:text-red-300 transition-colors mt-2">

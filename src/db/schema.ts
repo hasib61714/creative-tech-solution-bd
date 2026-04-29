@@ -6,7 +6,15 @@ export const users = mysqlTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }),
+  avatarUrl: varchar('avatar_url', { length: 500 }),
+  phone: varchar('phone', { length: 50 }),
+  details: text('details'),
   role: varchar('role', { length: 32 }).notNull().default('user'),
+  permissions: text('permissions'),
+  resetToken: varchar('reset_token', { length: 255 }),
+  resetTokenExpires: datetime('reset_token_expires'),
+  lastLoginAt: datetime('last_login_at'),
+  lastLogoutAt: datetime('last_logout_at'),
   createdAt: datetime('created_at').notNull().default(sql`now()`),
   updatedAt: datetime('updated_at').notNull().default(sql`now()`),
 });
@@ -69,4 +77,15 @@ export const contactMessages = mysqlTable('contact_messages', {
 export const siteSettings = mysqlTable('site_settings', {
   key: varchar('key', { length: 100 }).primaryKey(),
   value: text('value'),
+});
+
+export const adminMessages = mysqlTable('admin_messages', {
+  id: int('id').primaryKey().autoincrement(),
+  senderId: int('sender_id').notNull(),
+  recipientId: int('recipient_id'),
+  subject: varchar('subject', { length: 255 }).notNull(),
+  message: text('message').notNull(),
+  context: varchar('context', { length: 100 }),
+  read: boolean('read').notNull().default(false),
+  createdAt: datetime('created_at').notNull().default(sql`now()`),
 });

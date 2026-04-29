@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
   if (!match) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   }
-  const token = jwt.sign({ id: user.id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
-  return NextResponse.json({ token });
+  await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
+  const permissions = user.permissions ? JSON.parse(user.permissions) : [];
+  const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role, permissions }, JWT_SECRET, { expiresIn: '7d' });
+  return NextResponse.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, avatarUrl: user.avatarUrl, permissions } });
 }

@@ -7,10 +7,30 @@ async function migrate() {
       email VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
       name VARCHAR(255),
+      avatar_url VARCHAR(500),
+      phone VARCHAR(50),
+      details TEXT,
       role VARCHAR(32) NOT NULL DEFAULT 'user',
+      permissions TEXT,
+      reset_token VARCHAR(255),
+      reset_token_expires DATETIME,
+      last_login_at DATETIME,
+      last_logout_at DATETIME,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB;
+  `);
+
+  await db.execute(`
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS phone VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS details TEXT,
+      ADD COLUMN IF NOT EXISTS permissions TEXT,
+      ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS reset_token_expires DATETIME,
+      ADD COLUMN IF NOT EXISTS last_login_at DATETIME,
+      ADD COLUMN IF NOT EXISTS last_logout_at DATETIME;
   `);
 
   await db.execute(`
@@ -82,6 +102,19 @@ async function migrate() {
     CREATE TABLE IF NOT EXISTS site_settings (
       \`key\` VARCHAR(100) PRIMARY KEY,
       value TEXT
+    ) ENGINE=InnoDB;
+  `);
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS admin_messages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      sender_id INT NOT NULL,
+      recipient_id INT,
+      subject VARCHAR(255) NOT NULL,
+      message TEXT NOT NULL,
+      context VARCHAR(100),
+      \`read\` TINYINT(1) NOT NULL DEFAULT 0,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB;
   `);
 
