@@ -11,10 +11,6 @@ type Service = {
 type Form = { title: string; slug: string; description: string; features: string; fromPrice: string; tag: string };
 const EMPTY: Form = { title: '', slug: '', description: '', features: '', fromPrice: '', tag: '' };
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 function slugify(s: string) { return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''); }
 
 export default function ServicesAdminPage() {
@@ -27,14 +23,14 @@ export default function ServicesAdminPage() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch('/api/admin/services', { headers: authHeaders() });
+    const res = await fetch('/api/admin/services');
     setRows(await res.json());
     setLoading(false);
   }
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      const res = await fetch('/api/admin/services', { headers: authHeaders() });
+      const res = await fetch('/api/admin/services');
       setRows(await res.json());
       setLoading(false);
     })();
@@ -45,7 +41,7 @@ export default function ServicesAdminPage() {
     setSaving(true);
     await fetch(editing ? `/api/admin/services/${editing.id}` : '/api/admin/services', {
       method: editing ? 'PUT' : 'POST',
-      headers: authHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, active: editing?.active ?? true }),
     });
     setSaving(false);
@@ -70,7 +66,7 @@ export default function ServicesAdminPage() {
 
   async function toggleActive(s: Service) {
     await fetch(`/api/admin/services/${s.id}`, {
-      method: 'PUT', headers: authHeaders(),
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...s, active: !s.active }),
     });
     setRows((r) => r.map((x) => x.id === s.id ? { ...x, active: !x.active } : x));
@@ -78,7 +74,7 @@ export default function ServicesAdminPage() {
 
   async function remove(id: number) {
     if (!confirm('Delete this service?')) return;
-    await fetch(`/api/admin/services/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
     setRows((r) => r.filter((x) => x.id !== id));
   }
 

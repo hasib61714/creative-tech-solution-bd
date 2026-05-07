@@ -46,10 +46,6 @@ function parsePermissions(value?: string | null) {
   }
 }
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function UsersAdminPage() {
   const [rows, setRows] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,21 +54,26 @@ export default function UsersAdminPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [editing, setEditing] = useState<User | null>(null);
+  const [page, setPage]       = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal]     = useState(0);
 
-  async function load() {
+  async function load(nextPage = page) {
     setLoading(true);
-    const res = await fetch('/api/admin/users', { headers: authHeaders() });
-    if (res.ok) setRows(await res.json());
+    const res = await fetch(`/api/admin/users?page=${nextPage}`);
+    if (res.ok) {
+      const json = await res.json();
+      setRows(json.data ?? json);
+      setTotal(json.total ?? 0);
+      setTotalPages(json.totalPages ?? 1);
+      setPage(nextPage);
+    }
     setLoading(false);
   }
 
   useEffect(() => {
-    void (async () => {
-      setLoading(true);
-      const res = await fetch('/api/admin/users', { headers: authHeaders() });
-      if (res.ok) setRows(await res.json());
-      setLoading(false);
-    })();
+    void load(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function save() {
@@ -81,7 +82,7 @@ export default function UsersAdminPage() {
     setError('');
     const res = await fetch(editing ? `/api/admin/users/${editing.id}` : '/api/admin/users', {
       method: editing ? 'PATCH' : 'POST',
-      headers: authHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     });
     const data = await res.json();
@@ -93,7 +94,7 @@ export default function UsersAdminPage() {
     setOpen(false);
     setEditing(null);
     setForm(EMPTY);
-    await load();
+    await load(page);
   }
 
   function startEdit(user: User) {
@@ -114,7 +115,7 @@ export default function UsersAdminPage() {
   async function changeRole(user: User, role: 'admin' | 'user') {
     const res = await fetch(`/api/admin/users/${user.id}`, {
       method: 'PATCH',
-      headers: authHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role }),
     });
     if (res.ok) setRows((r) => r.map((x) => x.id === user.id ? { ...x, role } : x));
@@ -125,14 +126,14 @@ export default function UsersAdminPage() {
     if (!password) return;
     await fetch(`/api/admin/users/${user.id}`, {
       method: 'PATCH',
-      headers: authHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
     });
   }
 
   async function remove(user: User) {
     if (!confirm(`Delete ${user.email}?`)) return;
-    const res = await fetch(`/api/admin/users/${user.id}`, { method: 'DELETE', headers: authHeaders() });
+    const res = await fetch(`/api/admin/users/${user.id}`, { method: 'DELETE' });
     if (res.ok) setRows((r) => r.filter((x) => x.id !== user.id));
   }
 
@@ -216,6 +217,22 @@ export default function UsersAdminPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 text-sm">
+          <span className="text-slate-500">{total} total</span>
+          <div className="flex items-center gap-3">
+            <button type="button" disabled={page <= 1} onClick={() => load(page - 1)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              ← Prev
+            </button>
+            <span className="text-slate-400">Page {page} of {totalPages}</span>
+            <button type="button" disabled={page >= totalPages} onClick={() => load(page + 1)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              Next →
+            </button>
+          </div>
         </div>
       )}
 

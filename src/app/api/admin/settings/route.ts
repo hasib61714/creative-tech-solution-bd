@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/drizzle';
 import { siteSettings } from '@/db/schema';
 import { requirePermission, unauthorized } from '@/lib/auth';
+import { z } from 'zod';
+
+const settingsSchema = z.record(z.string().min(1).max(100), z.string().max(10000));
 
 async function canManageSettings(req: NextRequest) {
   return (await requirePermission(req, 'manage_content')) || (await requirePermission(req, 'manage_settings'));
@@ -16,8 +19,10 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   if (!(await canManageSettings(req))) return unauthorized();
-  const body: Record<string, string> = await req.json();
-  for (const [key, value] of Object.entries(body)) {
+  const body = await req.json().catch(() => null);
+  const parsed = settingsSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  for (const [key, value] of Object.entries(parsed.data)) {
     await db
       .insert(siteSettings)
       .values({ key, value })

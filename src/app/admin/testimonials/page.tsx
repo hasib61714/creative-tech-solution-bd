@@ -13,10 +13,6 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: 'bg-red-500/15  text-red-400  border border-red-500/25',
 };
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function TestimonialsPage() {
   const [rows, setRows]       = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,34 +22,34 @@ export default function TestimonialsPage() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch('/api/admin/testimonials', { headers: authHeaders() });
+    const res = await fetch('/api/admin/testimonials');
     setRows(await res.json());
     setLoading(false);
   }
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      const res = await fetch('/api/admin/testimonials', { headers: authHeaders() });
+      const res = await fetch('/api/admin/testimonials');
       setRows(await res.json());
       setLoading(false);
     })();
   }, []);
 
   async function setStatus(id: number, status: string) {
-    await fetch(`/api/admin/testimonials/${id}`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }) });
+    await fetch(`/api/admin/testimonials/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
     setRows((r) => r.map((t) => t.id === id ? { ...t, status } : t));
   }
 
   async function remove(id: number) {
     if (!confirm('Delete this testimonial?')) return;
-    await fetch(`/api/admin/testimonials/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
     setRows((r) => r.filter((t) => t.id !== id));
   }
 
   async function save() {
     if (!form.name || !form.message) return;
     setSaving(true);
-    await fetch('/api/admin/testimonials', { method: 'POST', headers: authHeaders(), body: JSON.stringify(form) });
+    await fetch('/api/admin/testimonials', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     setSaving(false);
     setOpen(false);
     setForm(EMPTY);

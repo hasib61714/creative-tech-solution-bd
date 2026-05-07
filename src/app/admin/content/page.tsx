@@ -4,10 +4,6 @@ import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import { CONTENT_DEFAULTS, CONTENT_GROUPS, SiteContent } from '@/lib/content-defaults';
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function ContentPage() {
   const [form, setForm] = useState<SiteContent>({ ...CONTENT_DEFAULTS });
   const [loading, setLoading] = useState(true);
@@ -15,7 +11,7 @@ export default function ContentPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/settings', { headers: authHeaders() })
+    fetch('/api/admin/settings')
       .then((r) => r.json())
       .then((data) => {
         setForm((f) => ({ ...f, ...Object.fromEntries(Object.entries(data).filter(([k]) => k in CONTENT_DEFAULTS)) } as SiteContent));
@@ -25,7 +21,7 @@ export default function ContentPage() {
 
   async function save() {
     setSaving(true);
-    await fetch('/api/admin/settings', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(form) });
+    await fetch('/api/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);

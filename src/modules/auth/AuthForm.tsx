@@ -27,7 +27,6 @@ export default function AuthForm() {
       const payload = { ...form };
       if (mode === 'reset') {
         payload.otp = form.otp;
-        delete payload.token;
       }
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -52,8 +51,7 @@ export default function AuthForm() {
           return;
         }
         setSuccess('Login successful!');
-        if (mode === 'login' && data.token) {
-          localStorage.setItem('token', data.token);
+        if (mode === 'login') {
           router.replace('/admin');
         }
       }

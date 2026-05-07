@@ -8,10 +8,6 @@ type Form = { title: string; category: string; metric: string; tag: string; desc
 const EMPTY: Form = { title: '', category: '', metric: '', tag: '', description: '' };
 const CATEGORIES = ['Web', 'Marketing', 'Design', 'AI', 'SEO'];
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function PortfolioAdminPage() {
   const [rows, setRows]       = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,14 +18,14 @@ export default function PortfolioAdminPage() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch('/api/admin/portfolio', { headers: authHeaders() });
+    const res = await fetch('/api/admin/portfolio');
     setRows(await res.json());
     setLoading(false);
   }
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      const res = await fetch('/api/admin/portfolio', { headers: authHeaders() });
+      const res = await fetch('/api/admin/portfolio');
       setRows(await res.json());
       setLoading(false);
     })();
@@ -40,7 +36,7 @@ export default function PortfolioAdminPage() {
     setSaving(true);
     await fetch(editing ? `/api/admin/portfolio/${editing.id}` : '/api/admin/portfolio', {
       method: editing ? 'PUT' : 'POST',
-      headers: authHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     });
     setSaving(false);
@@ -64,7 +60,7 @@ export default function PortfolioAdminPage() {
 
   async function remove(id: number) {
     if (!confirm('Delete this project?')) return;
-    await fetch(`/api/admin/portfolio/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`/api/admin/portfolio/${id}`, { method: 'DELETE' });
     setRows((r) => r.filter((x) => x.id !== id));
   }
 

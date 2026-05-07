@@ -3,12 +3,18 @@ import { db } from '@/db/drizzle';
 import { testimonials } from '@/db/schema';
 import { requirePermission, unauthorized } from '@/lib/auth';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
+
+const patchSchema = z.object({
+  status: z.enum(['pending', 'approved', 'rejected']),
+});
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!(await requirePermission(req, 'manage_testimonials'))) return unauthorized();
   const { id } = await params;
-  const { status } = await req.json();
-  await db.update(testimonials).set({ status }).where(eq(testimonials.id, Number(id)));
+  const parsed = patchSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+  await db.update(testimonials).set({ status: parsed.data.status }).where(eq(testimonials.id, Number(id)));
   return NextResponse.json({ success: true });
 }
 

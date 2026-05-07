@@ -4,13 +4,27 @@ import { users } from '@/db/schema';
 import { requirePermission, unauthorized } from '@/lib/auth';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+
+const patchUserSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  email: z.string().email().max(255).optional(),
+  role: z.enum(['admin', 'user']).optional(),
+  password: z.string().min(8).max(128).optional(),
+  avatarUrl: z.string().url().max(500).optional().or(z.literal('')),
+  phone: z.string().max(50).optional(),
+  details: z.string().max(2000).optional(),
+  permissions: z.array(z.string()).optional(),
+});
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const admin = await requirePermission(req, 'manage_users');
   if (!admin) return unauthorized();
   const { id } = await params;
   const userId = Number(id);
-  const { name, email, role, password, avatarUrl, phone, details, permissions } = await req.json();
+  const parsed = patchUserSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  const { name, email, role, password, avatarUrl, phone, details, permissions } = parsed.data;
 
   if (role && !['admin', 'user'].includes(role)) {
     return NextResponse.json({ error: 'Invalid role' }, { status: 400 });

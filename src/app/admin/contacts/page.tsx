@@ -5,38 +5,37 @@ import { Trash2, MailOpen, Mail, RefreshCw } from 'lucide-react';
 
 type Message = { id: number; name: string; email: string; subject?: string; message: string; read: boolean; createdAt: string; };
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function ContactsAdminPage() {
   const [rows, setRows]       = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [page, setPage]       = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal]     = useState(0);
 
-  async function load() {
+  async function load(nextPage = page) {
     setLoading(true);
-    const res = await fetch('/api/admin/contacts', { headers: authHeaders() });
-    setRows(await res.json());
+    const res = await fetch(`/api/admin/contacts?page=${nextPage}`);
+    const json = await res.json();
+    setRows(json.data ?? json);
+    setTotal(json.total ?? 0);
+    setTotalPages(json.totalPages ?? 1);
+    setPage(nextPage);
     setLoading(false);
   }
   useEffect(() => {
-    void (async () => {
-      setLoading(true);
-      const res = await fetch('/api/admin/contacts', { headers: authHeaders() });
-      setRows(await res.json());
-      setLoading(false);
-    })();
+    void load(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function markRead(id: number) {
-    await fetch('/api/admin/contacts', { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ id }) });
+    await fetch('/api/admin/contacts', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     setRows((r) => r.map((m) => m.id === id ? { ...m, read: true } : m));
   }
 
   async function remove(id: number) {
     if (!confirm('Delete this message?')) return;
-    await fetch(`/api/admin/contacts/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`/api/admin/contacts/${id}`, { method: 'DELETE' });
     setRows((r) => r.filter((m) => m.id !== id));
   }
 
@@ -51,7 +50,7 @@ export default function ContactsAdminPage() {
             {rows.length} total{unread > 0 && <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/25">{unread} unread</span>}
           </p>
         </div>
-        <button type="button" onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
+        <button type="button" onClick={() => load(page)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
@@ -103,6 +102,22 @@ export default function ContactsAdminPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 text-sm">
+          <span className="text-slate-500">{total} total</span>
+          <div className="flex items-center gap-3">
+            <button type="button" disabled={page <= 1} onClick={() => load(page - 1)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              ← Prev
+            </button>
+            <span className="text-slate-400">Page {page} of {totalPages}</span>
+            <button type="button" disabled={page >= totalPages} onClick={() => load(page + 1)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              Next →
+            </button>
+          </div>
         </div>
       )}
     </div>

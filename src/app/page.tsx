@@ -34,7 +34,7 @@ const steps = [
   { num: '04', title: 'Grow & Scale',    desc: 'We monitor results, optimize performance, and help you scale further.' },
 ];
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function Home() {
   const content = await getSiteContent();

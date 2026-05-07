@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Target, Zap, Handshake, TrendingUp, Users } from 'lucide-react';
 import TopBar from '../../components/TopBar';
 import Navbar from '../../components/Navbar';
@@ -25,7 +26,12 @@ const milestones = [
   { year: '2024', title: '100+ Clients',desc: 'Serving businesses nationwide with a 95% satisfaction rate.' },
 ];
 
-export const dynamic = 'force-dynamic';
+export const metadata: Metadata = {
+  title: 'About Us | Creative Tech Solution BD',
+  description: 'Learn about Creative Tech Solution BD — our mission, team, and journey to empower businesses across Bangladesh with world-class tech solutions.',
+};
+
+export const revalidate = 3600;
 
 export default async function AboutPage() {
   const content = await getSiteContent();

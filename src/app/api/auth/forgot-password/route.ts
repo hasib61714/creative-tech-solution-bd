@@ -3,6 +3,7 @@ import { db } from '@/db/drizzle';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { createHash } from 'crypto';
+import { sendOtpEmail } from '@/lib/email';
 
 function hashOTP(otp: string) {
   return createHash('sha256').update(otp).digest('hex');
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     .set({ resetToken: hashOTP(otp), resetTokenExpires: expires })
     .where(eq(users.id, user.id));
 
-  // TODO: Send OTP to user's email here (implement email sending logic)
+  void sendOtpEmail(email, otp);
 
   return NextResponse.json({
     success: true,

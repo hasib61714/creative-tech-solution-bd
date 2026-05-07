@@ -4,12 +4,21 @@ import { users } from '@/db/schema';
 import { count, eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { PERMISSIONS } from '@/lib/auth';
+import { z } from 'zod';
+
+const registerSchema = z.object({
+  name: z.string().min(1).max(255),
+  email: z.string().email().max(255),
+  password: z.string().min(8).max(128),
+});
 
 export async function POST(req: NextRequest) {
-  const { name, email, password } = await req.json();
-  if (!name || !email || !password) {
-    return NextResponse.json({ error: 'All fields required' }, { status: 400 });
+  const body = await req.json().catch(() => null);
+  const parsed = registerSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
   }
+  const { name, email, password } = parsed.data;
   const exists = await db.select().from(users).where(eq(users.email, email));
   if (exists.length > 0) {
     return NextResponse.json({ error: 'Email already registered' }, { status: 400 });

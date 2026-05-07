@@ -50,10 +50,6 @@ const GROUPS = [
   },
 ] as const;
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function SettingsPage() {
   const [form, setForm]       = useState<Fields>(DEFAULTS);
   const [loading, setLoading] = useState(true);
@@ -61,7 +57,7 @@ export default function SettingsPage() {
   const [saved, setSaved]     = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/settings', { headers: authHeaders() })
+    fetch('/api/admin/settings')
       .then((r) => r.json())
       .then((data) => {
         setForm((f) => ({ ...f, ...Object.fromEntries(Object.entries(data).filter(([k]) => k in DEFAULTS)) } as Fields));
@@ -71,7 +67,7 @@ export default function SettingsPage() {
 
   async function save() {
     setSaving(true);
-    await fetch('/api/admin/settings', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(form) });
+    await fetch('/api/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);

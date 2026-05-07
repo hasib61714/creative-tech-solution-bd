@@ -28,10 +28,10 @@ export type AuthUser = {
 };
 
 export function verifyToken(req: NextRequest): AuthUser | null {
-  const auth = req.headers.get('Authorization');
-  if (!auth?.startsWith('Bearer ')) return null;
+  const token = req.cookies.get('auth_token')?.value;
+  if (!token) return null;
   try {
-    return jwt.verify(auth.slice(7), process.env.JWT_SECRET!) as AuthUser;
+    return jwt.verify(token, process.env.JWT_SECRET!) as AuthUser;
   } catch {
     return null;
   }

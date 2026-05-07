@@ -22,15 +22,11 @@ const STATUS_STYLES: Record<string, string> = {
   cancelled: 'bg-red-500/15 text-red-400',
 };
 
-function authHeaders() {
-  return { Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/stats', { headers: authHeaders() })
+    fetch('/api/admin/stats')
       .then((r) => r.json())
       .then(setStats)
       .catch(() => {});

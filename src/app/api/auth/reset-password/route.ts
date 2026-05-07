@@ -4,15 +4,24 @@ import { users } from '@/db/schema';
 import { and, eq, gt } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { createHash } from 'crypto';
+import { z } from 'zod';
 
 function hashOTP(otp: string) {
   return createHash('sha256').update(otp).digest('hex');
 }
 
-  const { otp, password } = await req.json();
-  if (!otp || !password) {
-    return NextResponse.json({ error: 'OTP and password required' }, { status: 400 });
+const resetSchema = z.object({
+  otp: z.string().length(6),
+  password: z.string().min(8).max(128),
+});
+
+export async function POST(req: NextRequest) {
+  const body = await req.json().catch(() => null);
+  const parsed = resetSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'OTP and password (min 8 chars) required' }, { status: 400 });
   }
+  const { otp, password } = parsed.data;
 
   const [user] = await db.select({ id: users.id }).from(users).where(and(
     eq(users.resetToken, hashOTP(otp)),

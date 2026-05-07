@@ -14,40 +14,39 @@ const STATUS_STYLES: Record<string, string> = {
   cancelled: 'bg-red-500/15 text-red-400 border border-red-500/25',
 };
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function BookingsPage() {
   const [rows, setRows]       = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage]       = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal]     = useState(0);
 
-  async function load() {
+  async function load(nextPage = page) {
     setLoading(true);
-    const res = await fetch('/api/admin/bookings', { headers: authHeaders() });
-    setRows(await res.json());
+    const res = await fetch(`/api/admin/bookings?page=${nextPage}`);
+    const json = await res.json();
+    setRows(json.data ?? json);
+    setTotal(json.total ?? 0);
+    setTotalPages(json.totalPages ?? 1);
+    setPage(nextPage);
     setLoading(false);
   }
 
   useEffect(() => {
-    void (async () => {
-      setLoading(true);
-      const res = await fetch('/api/admin/bookings', { headers: authHeaders() });
-      setRows(await res.json());
-      setLoading(false);
-    })();
+    void load(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function updateStatus(id: number, status: string) {
     await fetch(`/api/admin/bookings/${id}`, {
-      method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }),
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }),
     });
     setRows((r) => r.map((b) => b.id === id ? { ...b, status } : b));
   }
 
   async function remove(id: number) {
     if (!confirm('Delete this booking?')) return;
-    await fetch(`/api/admin/bookings/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`/api/admin/bookings/${id}`, { method: 'DELETE' });
     setRows((r) => r.filter((b) => b.id !== id));
   }
 
@@ -56,9 +55,9 @@ export default function BookingsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-extrabold text-white">Bookings</h1>
-          <p className="text-slate-400 text-sm mt-1">{rows.length} total requests</p>
+          <p className="text-slate-400 text-sm mt-1">{total} total requests</p>
         </div>
-        <button type="button" onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
+        <button type="button" onClick={() => load(page)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/8 text-slate-400 hover:text-white text-sm transition-colors">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
@@ -122,6 +121,22 @@ export default function BookingsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 text-sm">
+          <span className="text-slate-500">{total} total</span>
+          <div className="flex items-center gap-3">
+            <button type="button" disabled={page <= 1} onClick={() => load(page - 1)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              ← Prev
+            </button>
+            <span className="text-slate-400">Page {page} of {totalPages}</span>
+            <button type="button" disabled={page >= totalPages} onClick={() => load(page + 1)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/8 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              Next →
+            </button>
+          </div>
         </div>
       )}
     </div>

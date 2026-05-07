@@ -33,16 +33,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     void (async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.replace('/auth');
-        return;
-      }
-      const res = await fetch('/api/admin/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch('/api/admin/me');
       if (!res.ok) {
-        localStorage.removeItem('token');
         router.replace('/auth');
         return;
       }
@@ -53,14 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [router]);
 
   async function logout() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      }).catch(() => {});
-    }
-    localStorage.removeItem('token');
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
     router.push('/auth');
   }
 

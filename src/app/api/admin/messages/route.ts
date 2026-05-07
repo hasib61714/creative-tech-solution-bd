@@ -3,6 +3,7 @@ import { db } from '@/db/drizzle';
 import { adminMessages, users } from '@/db/schema';
 import { getCurrentUser, requirePermission, unauthorized } from '@/lib/auth';
 import { desc, eq, or } from 'drizzle-orm';
+import { z } from 'zod';
 
 export async function GET(req: NextRequest) {
   const user = await getCurrentUser(req);
@@ -18,20 +19,26 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(rows);
 }
 
+const messageSchema = z.object({
+  recipientId: z.number().int().positive().optional().nullable(),
+  subject: z.string().min(1).max(255),
+  message: z.string().min(1).max(5000),
+  context: z.string().max(100).optional(),
+});
+
 export async function POST(req: NextRequest) {
   const sender = await requirePermission(req, 'send_messages');
   if (!sender) return unauthorized();
-  const { recipientId, subject, message, context } = await req.json();
-  if (!subject || !message) {
-    return NextResponse.json({ error: 'Subject and message required' }, { status: 400 });
-  }
+  const parsed = messageSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  const { recipientId, subject, message, context } = parsed.data;
   if (recipientId) {
-    const [recipient] = await db.select({ id: users.id }).from(users).where(eq(users.id, Number(recipientId)));
+    const [recipient] = await db.select({ id: users.id }).from(users).where(eq(users.id, recipientId));
     if (!recipient) return NextResponse.json({ error: 'Recipient not found' }, { status: 400 });
   }
   await db.insert(adminMessages).values({
     senderId: sender.id,
-    recipientId: recipientId ? Number(recipientId) : null,
+    recipientId: recipientId ?? null,
     subject,
     message,
     context,

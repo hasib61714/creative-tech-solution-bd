@@ -18,10 +18,6 @@ type User = { id: number; name?: string | null; email: string };
 type Form = { recipientId: string; subject: string; message: string; context: string };
 const EMPTY: Form = { recipientId: '', subject: '', message: '', context: 'general' };
 
-function authHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
-
 export default function AdminMessagesPage() {
   const [rows, setRows] = useState<Message[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -31,8 +27,8 @@ export default function AdminMessagesPage() {
 
   async function load() {
     const [messagesRes, usersRes] = await Promise.all([
-      fetch('/api/admin/messages', { headers: authHeaders() }),
-      fetch('/api/admin/message-users', { headers: authHeaders() }),
+      fetch('/api/admin/messages'),
+      fetch('/api/admin/message-users'),
     ]);
     if (messagesRes.ok) setRows(await messagesRes.json());
     if (usersRes.ok) setUsers(await usersRes.json());
@@ -41,8 +37,8 @@ export default function AdminMessagesPage() {
   useEffect(() => {
     void (async () => {
       const [messagesRes, usersRes] = await Promise.all([
-        fetch('/api/admin/messages', { headers: authHeaders() }),
-        fetch('/api/admin/message-users', { headers: authHeaders() }),
+        fetch('/api/admin/messages'),
+        fetch('/api/admin/message-users'),
       ]);
       if (messagesRes.ok) setRows(await messagesRes.json());
       if (usersRes.ok) setUsers(await usersRes.json());
@@ -54,7 +50,7 @@ export default function AdminMessagesPage() {
     setSaving(true);
     const res = await fetch('/api/admin/messages', {
       method: 'POST',
-      headers: authHeaders(),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, recipientId: form.recipientId || null }),
     });
     setSaving(false);
@@ -65,7 +61,7 @@ export default function AdminMessagesPage() {
   }
 
   async function markRead(message: Message) {
-    await fetch(`/api/admin/messages/${message.id}`, { method: 'PATCH', headers: authHeaders() });
+    await fetch(`/api/admin/messages/${message.id}`, { method: 'PATCH' });
     setRows((items) => items.map((item) => item.id === message.id ? { ...item, read: true } : item));
   }
 

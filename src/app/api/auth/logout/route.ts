@@ -9,5 +9,7 @@ export async function POST(req: NextRequest) {
   if (user) {
     await db.update(users).set({ lastLogoutAt: new Date() }).where(eq(users.id, user.id));
   }
-  return NextResponse.json({ success: true });
+  const response = NextResponse.json({ success: true });
+  response.cookies.set('auth_token', '', { httpOnly: true, path: '/', maxAge: 0 });
+  return response;
 }
