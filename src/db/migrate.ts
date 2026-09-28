@@ -74,6 +74,24 @@ async function migrate() {
     ) ENGINE=InnoDB;
   `);
 
+  // Portfolio case-study columns. Added separately so existing installs
+  // upgrade in place without losing rows.
+  await db.execute(`
+    ALTER TABLE portfolio_items
+      ADD COLUMN IF NOT EXISTS slug VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS short_description VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS full_description TEXT,
+      ADD COLUMN IF NOT EXISTS technologies TEXT,
+      ADD COLUMN IF NOT EXISTS github_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS live_url VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS image VARCHAR(500),
+      ADD COLUMN IF NOT EXISTS featured TINYINT(1) NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS status VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS project_type VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS year INT,
+      ADD COLUMN IF NOT EXISTS updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+  `);
+
   await db.execute(`
     CREATE TABLE IF NOT EXISTS testimonials (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,6 +117,11 @@ async function migrate() {
   `);
 
   await db.execute(`
+    ALTER TABLE contact_messages
+      ADD COLUMN IF NOT EXISTS phone VARCHAR(50);
+  `);
+
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS site_settings (
       \`key\` VARCHAR(100) PRIMARY KEY,
       value TEXT
@@ -116,6 +139,21 @@ async function migrate() {
       \`read\` TINYINT(1) NOT NULL DEFAULT 0,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB;
+  `);
+
+  // Content audit. Earlier releases shipped defaults asserting a 2020 founding
+  // date, 100+ clients, a 95% satisfaction rate and 24/7 availability. If an
+  // install saved those defaults into site_settings they would keep overriding
+  // the corrected copy, so the stored rows are cleared and the page falls back
+  // to the current defaults. Anything the owner has since edited in
+  // /admin/content can simply be re-entered there.
+  await db.execute(`
+    DELETE FROM site_settings WHERE \`key\` IN (
+      'home_stats', 'home_badge', 'brand_tagline', 'about_subtitle',
+      'about_title', 'about_highlight', 'portfolio_subtitle', 'portfolio_title',
+      'portfolio_highlight', 'home_hero_title', 'home_hero_highlight',
+      'home_hero_subtitle', 'home_why_heading', 'home_services_subtitle'
+    );
   `);
 
   console.log('All migrations complete.');

@@ -1,240 +1,326 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  Globe, TrendingUp, Search, Bot, Paintbrush, Headphones,
-  Zap, Rocket, Lock, DollarSign, BarChart2,
-  ArrowRight, ChevronRight,
+  Globe, Code2, ShoppingCart, Bot, Paintbrush, Search,
+  GitBranch, FileText, MessageSquare, ShieldCheck, Gauge, LifeBuoy,
+  ArrowRight,
 } from 'lucide-react';
-import TopBar from '../components/TopBar';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import { GithubIcon } from '@/components/icons';
+import SiteShell from '@/components/SiteShell';
+import ProjectCard from '@/components/ProjectCard';
+import { Section, SectionHeading, Eyebrow, ButtonLink, BrowserMockup, TechBadge } from '@/components/ui';
 import { getSiteContent, highlightText, parseListRows } from '@/lib/content';
+import { getFeatured } from '@/lib/portfolio';
+import { SITE } from '@/lib/site';
 
-const services = [
-  { icon: Globe,       title: 'Web Development',   desc: 'Fast, modern websites & web apps tailored to your business goals.',             tag: 'Popular' },
-  { icon: TrendingUp,  title: 'Digital Marketing',  desc: 'Reach your audience with targeted campaigns that actually convert.',            tag: '' },
-  { icon: Search,      title: 'SEO',                desc: 'Rank higher on Google and drive consistent organic traffic.',                   tag: '' },
-  { icon: Bot,         title: 'AI Solutions',       desc: 'Automate workflows and gain insights with custom AI tools.',                    tag: 'New' },
-  { icon: Paintbrush,  title: 'UI/UX Design',       desc: 'Beautiful, intuitive designs that turn visitors into customers.',               tag: '' },
-  { icon: Headphones,  title: '24/7 Support',       desc: 'Dedicated technical support keeping your business running always.',             tag: '' },
+export const metadata: Metadata = {
+  title: 'Creative Tech Solution BD | Web Development & Digital Solutions',
+  description:
+    'Creative Tech Solution BD builds websites, web applications, e-commerce stores and AI-powered software for businesses and organisations in Bangladesh.',
+  alternates: { canonical: '/' },
+};
+
+export const revalidate = 300;
+
+const SERVICES = [
+  {
+    icon: Globe,
+    title: 'Web Development',
+    desc: 'Fast, modern websites and web applications, built to the requirements of your business rather than a template.',
+    href: '/services/web-development',
+    tech: ['Next.js', 'React', 'Laravel'],
+  },
+  {
+    icon: Code2,
+    title: 'Custom Software',
+    desc: 'Internal tools, admin systems and business platforms that replace spreadsheets and manual record-keeping.',
+    href: '/services/web-development',
+    tech: ['TypeScript', 'Node.js', 'PHP'],
+  },
+  {
+    icon: ShoppingCart,
+    title: 'E-commerce',
+    desc: 'Online stores with product management, orders and payment integration for the Bangladeshi market.',
+    href: '/services/web-development',
+    tech: ['Next.js', 'MySQL', 'Payments'],
+  },
+  {
+    icon: Bot,
+    title: 'AI & Automation',
+    desc: 'Machine-learning models and AI integrations served behind an API, so they plug into software you already run.',
+    href: '/services/ai-solutions',
+    tech: ['Python', 'FastAPI', 'AI APIs'],
+  },
+  {
+    icon: Paintbrush,
+    title: 'UI/UX Design',
+    desc: 'Interface design and prototypes — the layout and flow worked out before a line of code is written.',
+    href: '/services/design',
+    tech: ['Figma', 'Tailwind CSS'],
+  },
+  {
+    icon: Search,
+    title: 'SEO & Maintenance',
+    desc: 'Technical SEO, performance work and ongoing maintenance to keep a site fast, indexed and secure.',
+    href: '/services/seo',
+    tech: ['Core Web Vitals', 'Schema'],
+  },
 ];
 
-const whyUs = [
-  { icon: Zap,          title: 'Fast Delivery',    desc: 'We ship projects on time, every time — without cutting corners on quality.' },
-  { icon: Rocket,       title: 'Modern Stack',     desc: 'Built with the latest technologies for performance and scalability.' },
-  { icon: Lock,         title: 'Secure & Reliable',desc: 'Security-first approach with 99.9% uptime guaranteed for all projects.' },
-  { icon: DollarSign,   title: 'Affordable',       desc: 'World-class quality at Bangladesh-competitive rates with flexible packages.' },
-  { icon: BarChart2,    title: 'Data-Driven',      desc: 'Every decision backed by analytics and real measurable results.' },
-  { icon: Headphones,   title: '24/7 Support',     desc: 'Round-the-clock dedicated support so you are never left alone.' },
+const WHY_US = [
+  {
+    icon: GitBranch,
+    title: 'You can read the code',
+    desc: 'Our projects are on GitHub, including this website. Judge the work before you commit to it.',
+  },
+  {
+    icon: FileText,
+    title: 'Scope and price in writing',
+    desc: 'Every project starts with a written scope and a fixed quote. No open-ended hourly billing.',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Direct communication',
+    desc: 'You speak to the person building your project, not to an account manager relaying messages.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Secure by default',
+    desc: 'Hashed passwords, validated inputs, server-side authorisation and no secrets in client code.',
+  },
+  {
+    icon: Gauge,
+    title: 'Built to be fast',
+    desc: 'Server rendering, optimised images and a light JavaScript payload — on Bangladeshi mobile networks too.',
+  },
+  {
+    icon: LifeBuoy,
+    title: 'Support after launch',
+    desc: 'Launch is not the end of the project. Fixes and improvements continue once the site is live.',
+  },
 ];
 
-const steps = [
-  { num: '01', title: 'Discovery Call',  desc: 'We discuss your goals, needs, and vision in a free 30-min consultation.' },
-  { num: '02', title: 'Strategy & Plan', desc: 'Our team crafts a tailored action plan, timeline, and transparent pricing.' },
-  { num: '03', title: 'Build & Launch',  desc: 'We execute with precision, keeping you in the loop every step of the way.' },
-  { num: '04', title: 'Grow & Scale',    desc: 'We monitor results, optimize performance, and help you scale further.' },
+const PROCESS = [
+  { num: '01', title: 'Discovery', desc: 'We work out what the business actually needs, and what it does not.' },
+  { num: '02', title: 'Planning', desc: 'Scope, technology and structure agreed in writing, with a fixed price.' },
+  { num: '03', title: 'Design & build', desc: 'The interface is designed, then built — with progress you can see.' },
+  { num: '04', title: 'Testing', desc: 'Functionality, responsiveness across devices, and basic security checks.' },
+  { num: '05', title: 'Launch', desc: 'Deployment and production configuration, including domain and email setup.' },
+  { num: '06', title: 'Support', desc: 'Fixes and improvements after launch, on an agreed arrangement.' },
 ];
 
-export const revalidate = 60;
+const STACK = [
+  'Next.js', 'React', 'TypeScript', 'Node.js', 'Express', 'Laravel', 'PHP',
+  'Python', 'FastAPI', 'scikit-learn', 'MySQL', 'PostgreSQL', 'Supabase',
+  'Prisma', 'Drizzle ORM', 'Tailwind CSS', 'Socket.IO', 'REST APIs',
+];
 
 export default async function Home() {
-  const content = await getSiteContent();
+  const [content, featured] = await Promise.all([getSiteContent(), getFeatured(6)]);
   const heroTitle = highlightText(content.home_hero_title, content.home_hero_highlight);
-  const stats = parseListRows(content.home_stats).map(([value, label, desc]) => ({ value, label, desc }));
+  const trustPoints = parseListRows(content.home_trust_points).map(([value, label, desc]) => ({
+    value,
+    label,
+    desc,
+  }));
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      <TopBar />
-      <Navbar />
-
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-slate-950 min-h-[92vh] flex items-center">
-        <div className="absolute inset-0 bg-linear-to-r from-slate-950/60 via-slate-950/40 to-slate-950/50" />
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-slate-950/50" />
+    <SiteShell>
+      {/* Hero — the visual is a real project preview, not a stock photograph. */}
+      <section className="relative overflow-hidden bg-slate-950 py-16 lg:py-24">
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
-        <div className="absolute -top-40 -right-40 w-140 h-140 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-40 -left-40 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-3xl py-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-7">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-              {content.home_badge}
+        <div className="absolute -top-40 -right-40 h-140 w-140 rounded-full bg-red-600/15 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-40 -left-40 h-120 w-120 rounded-full bg-blue-700/15 blur-3xl" aria-hidden="true" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+            <div>
+              <Eyebrow tone="dark">{content.home_badge}</Eyebrow>
+              <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-white text-balance sm:text-5xl lg:text-6xl">
+                {heroTitle.before}
+                {heroTitle.highlight && (
+                  <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
+                    {heroTitle.highlight}
+                  </span>
+                )}
+                {heroTitle.after}
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
+                {content.home_hero_subtitle}
+              </p>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <ButtonLink href="/booking" variant="primary" size="lg">
+                  {content.home_primary_cta}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </ButtonLink>
+                <ButtonLink href="/portfolio" variant="ghostDark" size="lg">
+                  {content.home_secondary_cta}
+                </ButtonLink>
+              </div>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.07] tracking-tight mb-6">
-              {heroTitle.before}
-              {heroTitle.highlight && (
-                <span className="bg-linear-to-r from-red-400 to-blue-400 bg-clip-text text-transparent">
-                  {heroTitle.highlight}
-                </span>
-              )}
-              {heroTitle.after}
-            </h1>
-            <p className="text-slate-300 text-lg sm:text-xl leading-relaxed max-w-xl mb-10">
-              {content.home_hero_subtitle}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/services" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg hover:shadow-blue-700/25 px-10 py-5 text-base active:scale-95">
-                {content.home_primary_cta} <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-white/10 text-white border border-white/20 hover:bg-white/20 hover:border-white/30 px-10 py-5 text-base">
-                {content.home_secondary_cta}
-              </Link>
+
+            <div className="relative" aria-hidden="true">
+              <div className="grid grid-cols-2 gap-4">
+                <BrowserMockup label="IMAP — live job tracking" className="col-span-2 aspect-16/9" />
+                <BrowserMockup label="HairHub ERP" className="aspect-4/3" />
+                <BrowserMockup label="Heart Disease Prediction" className="aspect-4/3" />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-14 lg:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-slate-50 via-white to-slate-50 pointer-events-none" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="w-full h-px bg-linear-to-r from-red-500/30 via-transparent to-blue-500/30 mb-10" />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {stats.map((s) => (
-              <div key={s.label} className="relative group text-center p-6 rounded-2xl bg-white border border-slate-200 hover:border-blue-500/20 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md">
-                <div className="relative text-3xl lg:text-4xl font-black text-transparent bg-linear-to-br from-red-500 to-blue-600 bg-clip-text mb-2">{s.value}</div>
-                <div className="relative text-slate-900 font-semibold text-base mb-1">{s.label}</div>
-                <div className="relative text-slate-500 text-sm">{s.desc}</div>
-              </div>
-            ))}
-          </div>
-          <div className="w-full h-px bg-linear-to-r from-blue-500/30 via-transparent to-red-500/30 mt-10" />
-        </div>
-      </section>
+      {/* Trust — capabilities, not invented statistics. */}
+      <Section tone="muted" className="!py-14">
+        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {trustPoints.map((point) => (
+            <li key={point.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="text-lg font-bold text-slate-900">{point.value}</div>
+              <div className="mt-1 text-sm font-semibold text-red-700">{point.label}</div>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{point.desc}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       {/* Services */}
-      <section className="py-14 lg:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-50 text-red-600 border border-red-200 mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              What We Do
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight mx-auto">
-              {content.home_services_heading}
-            </h2>
-            <p className="mt-4 text-slate-500 text-base leading-relaxed max-w-2xl mx-auto">
-              {content.home_services_subtitle}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-            {services.slice(0, 2).map((s) => (
-              <ServiceCard key={s.title} {...s} large />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {services.slice(2).map((s) => (
-              <ServiceCard key={s.title} {...s} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section>
+        <SectionHeading
+          eyebrow="What we do"
+          title={content.home_services_heading}
+          subtitle={content.home_services_subtitle}
+        />
+        <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {SERVICES.map((service) => (
+            <li key={service.title}>
+              <Link
+                href={service.href}
+                className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg"
+              >
+                <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 transition-colors group-hover:bg-red-100">
+                  <service.icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span className="text-base font-bold text-slate-900">{service.title}</span>
+                <span className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{service.desc}</span>
+                <span className="mt-5 flex flex-wrap gap-1.5">
+                  {service.tech.map((tech) => (
+                    <TechBadge key={tech}>{tech}</TechBadge>
+                  ))}
+                </span>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-red-700">
+                  Learn more
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
-      {/* Why Us */}
-      <section className="py-14 lg:py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-50 text-red-600 border border-red-200 mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              Why Choose Us
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-              {content.home_why_heading}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {whyUs.map((w, i) => (
-              <div key={w.title} className={`group flex gap-5 p-6 rounded-2xl bg-white border border-slate-100 hover:-translate-y-0.5 transition-all duration-300 shadow-sm ${i % 2 === 0 ? 'hover:border-red-500/20' : 'hover:border-blue-500/20'}`}>
-                <div className={`shrink-0 w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center group-hover:scale-105 transition-all duration-300 ${i % 2 === 0 ? 'text-red-500 group-hover:bg-red-500/15' : 'text-blue-600 group-hover:bg-blue-500/15'}`}>
-                  <w.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className={`text-slate-900 font-semibold text-sm mb-1.5 transition-colors duration-200 ${i % 2 === 0 ? 'group-hover:text-red-600' : 'group-hover:text-blue-600'}`}>{w.title}</div>
-                  <div className="text-slate-500 text-sm leading-relaxed">{w.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Featured projects */}
+      <Section tone="muted">
+        <SectionHeading
+          eyebrow="Our work"
+          title={content.home_work_heading}
+          subtitle={content.home_work_subtitle}
+        />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {featured.map((project, index) => (
+            <ProjectCard key={project.slug} project={project} priority={index < 3} />
+          ))}
         </div>
-      </section>
+        <div className="mt-10 flex justify-center">
+          <ButtonLink href="/portfolio" variant="outline" size="md">
+            See all projects
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </ButtonLink>
+        </div>
+      </Section>
 
-      {/* How It Works */}
-      <section className="py-14 lg:py-20 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 dot-grid-light opacity-40 pointer-events-none" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-50 text-red-600 border border-red-200 mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              Our Process
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-              {content.home_process_heading}
-            </h2>
-            <p className="mt-4 text-slate-500 text-base leading-relaxed max-w-2xl mx-auto">
-              A simple, transparent process from first contact to final delivery.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {steps.map((step, i) => (
-              <div key={step.num} className={`group p-6 rounded-2xl bg-white border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${i % 2 === 0 ? 'hover:border-red-500/20 hover:shadow-red-500/5' : 'hover:border-blue-500/20 hover:shadow-blue-500/5'}`}>
-                <div className="text-4xl font-black text-transparent bg-linear-to-br from-red-500 to-blue-600 bg-clip-text mb-4">{step.num}</div>
-                <div className={`font-bold text-slate-900 mb-2 transition-colors ${i % 2 === 0 ? 'group-hover:text-red-600' : 'group-hover:text-blue-600'}`}>{step.title}</div>
-                <div className="text-sm text-slate-500 leading-relaxed">{step.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Why work with us */}
+      <Section>
+        <SectionHeading eyebrow="Why us" title={content.home_why_heading} />
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {WHY_US.map((item) => (
+            <li key={item.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+                <item.icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block text-sm font-bold text-slate-900">{item.title}</span>
+                <span className="mt-1.5 block text-sm leading-relaxed text-slate-600">{item.desc}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      {/* Process */}
+      <Section tone="muted">
+        <SectionHeading
+          eyebrow="Our process"
+          title={content.home_process_heading}
+          subtitle="The same six steps on every project, so you always know where things stand."
+        />
+        <ol className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {PROCESS.map((step) => (
+            <li key={step.num} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <span className="text-2xl font-black text-slate-300">{step.num}</span>
+              <h3 className="mt-3 font-bold text-slate-900">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      {/* Stack */}
+      <Section>
+        <SectionHeading
+          eyebrow="Technology"
+          title={content.home_stack_heading}
+          subtitle={content.home_stack_subtitle}
+        />
+        <ul className="flex flex-wrap justify-center gap-2">
+          {STACK.map((tech) => (
+            <li
+              key={tech}
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700"
+            >
+              {tech}
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       {/* CTA */}
-      <section className="py-14 lg:py-20 bg-slate-950 relative overflow-hidden">
+      <section className="relative overflow-hidden bg-slate-950 py-16 lg:py-24">
         <div className="absolute inset-0 dot-grid-dark opacity-10" />
-        <div className="absolute -top-32 left-1/4 w-120 h-120 rounded-full bg-red-600/20 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 right-1/4 w-120 h-120 rounded-full bg-blue-700/20 blur-3xl pointer-events-none" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-red-500/15 text-red-400 border border-red-500/25 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-            {content.home_cta_badge}
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4">
+        <div className="absolute -top-32 left-1/4 h-100 w-100 rounded-full bg-red-600/15 blur-3xl" aria-hidden="true" />
+        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+          <Eyebrow tone="dark">{content.home_cta_badge}</Eyebrow>
+          <h2 className="mt-6 text-3xl font-extrabold text-white text-balance sm:text-4xl">
             {content.home_cta_title}
           </h2>
-          <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
-            {content.home_cta_subtitle}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/booking" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-linear-to-r from-red-600 to-blue-700 text-white hover:from-red-500 hover:to-blue-600 shadow-lg hover:shadow-blue-700/25 px-10 py-4 text-base active:scale-95">
-              {content.home_secondary_cta} <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link href="/contact" className="inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 bg-white/10 text-white border border-white/20 hover:bg-white/20 px-10 py-4 text-base">
-              Contact Us
-            </Link>
+          <p className="mt-5 text-lg text-slate-400">{content.home_cta_subtitle}</p>
+          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+            <ButtonLink href="/booking" variant="primary" size="lg">
+              Get a Quote
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </ButtonLink>
+            <ButtonLink href="/contact" variant="ghostDark" size="lg">
+              Contact us
+            </ButtonLink>
           </div>
+          <a
+            href={SITE.githubProfile}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white"
+          >
+            <GithubIcon />
+            Explore our work on GitHub
+          </a>
         </div>
       </section>
-
-      <Footer />
-    </div>
-  );
-}
-
-function ServiceCard({ icon: Icon, title, desc, tag, large }: {
-  icon: React.ElementType; title: string; desc: string; tag: string; large?: boolean;
-}) {
-  return (
-    <div className={`group relative flex flex-col bg-linear-to-br from-slate-900 to-slate-800 border border-white/8 rounded-2xl p-7 hover:border-red-500/30 hover:shadow-2xl hover:shadow-red-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden ${large ? 'min-h-50' : ''}`}>
-      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div className="absolute top-0 right-0 w-40 h-40 bg-red-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-red-500/10 transition-colors duration-500" />
-      <div className="flex items-center gap-4 mb-4 relative">
-        <div className="w-12 h-12 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center text-red-400 group-hover:scale-110 group-hover:bg-red-500/25 transition-all duration-300">
-          <Icon className="w-6 h-6" />
-        </div>
-        <div className="text-white font-bold text-lg group-hover:text-red-400 transition-colors duration-200">{title}</div>
-        {tag && <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-500/15 text-red-400 border border-red-500/20">{tag}</span>}
-      </div>
-      <p className="text-slate-400 text-sm leading-relaxed relative flex-1">{desc}</p>
-      <div className="inline-flex items-center gap-1.5 mt-5 text-xs font-semibold text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 relative">
-        Learn More <ChevronRight className="w-3 h-3" />
-      </div>
-    </div>
+    </SiteShell>
   );
 }

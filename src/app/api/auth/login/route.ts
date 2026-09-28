@@ -5,8 +5,7 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
-
-const JWT_SECRET = process.env.JWT_SECRET!;
+import { getJwtSecret } from '@/lib/auth';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
   const permissions = user.permissions ? JSON.parse(user.permissions) : [];
   const token = jwt.sign(
     { id: user.id, email: user.email, name: user.name, role: user.role, permissions },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: '7d' },
   );
 

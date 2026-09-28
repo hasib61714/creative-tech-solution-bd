@@ -33,8 +33,10 @@ export default function BookingsPage() {
   }
 
   useEffect(() => {
+    // Initial fetch on mount; the state updates happen after the await.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load(1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function updateStatus(id: number, status: string) {

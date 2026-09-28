@@ -1,29 +1,32 @@
-'use client';
+import { Phone, Mail, Clock } from 'lucide-react';
+import type { SiteContent } from '@/lib/content-defaults';
 
-import { Phone, Mail } from 'lucide-react';
-import { useSiteContent } from '@/lib/useSiteContent';
-
-export default function TopBar() {
-  const content = useSiteContent();
+export default function TopBar({ content }: { content: SiteContent }) {
   return (
-    <div className="bg-slate-900 border-b border-white/6">
+    <div className="bg-slate-950 border-b border-white/6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-9">
+        <div className="flex h-9 items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <a href={`tel:${content.contact_phone_primary}`} className="flex items-center gap-1.5 text-slate-300 hover:text-white text-[11px] transition-colors duration-200">
-              <Phone className="w-3 h-3 text-red-400" />
+            <a
+              href={`tel:${content.contact_phone_primary}`}
+              className="flex items-center gap-1.5 text-[11px] text-slate-300 transition-colors duration-200 hover:text-white"
+            >
+              <Phone className="h-3 w-3 text-red-400" aria-hidden="true" />
               <span className="hidden sm:inline">{content.contact_phone_primary}</span>
-              <span className="sm:hidden">Call Us</span>
+              <span className="sm:hidden">Call us</span>
             </a>
-            <span className="hidden md:block w-px h-3 bg-white/20" />
-            <a href={`mailto:${content.contact_email}`} className="hidden md:flex items-center gap-1.5 text-slate-300 hover:text-white text-[11px] transition-colors duration-200">
-              <Mail className="w-3 h-3 text-blue-400" />
+            <span className="hidden md:block h-3 w-px bg-white/20" />
+            <a
+              href={`mailto:${content.contact_email}`}
+              className="hidden items-center gap-1.5 text-[11px] text-slate-300 transition-colors duration-200 hover:text-white md:flex"
+            >
+              <Mail className="h-3 w-3 text-blue-400" aria-hidden="true" />
               {content.contact_email}
             </a>
           </div>
-          <div className="hidden lg:flex items-center gap-1 text-slate-500 text-[10px]">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            <span>Available 24/7</span>
+          <div className="hidden items-center gap-1.5 text-[11px] text-slate-400 lg:flex">
+            <Clock className="h-3 w-3 text-slate-500" aria-hidden="true" />
+            <span>{content.contact_hours}</span>
           </div>
         </div>
       </div>

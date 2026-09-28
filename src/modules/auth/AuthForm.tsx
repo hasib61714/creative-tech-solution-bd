@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { KeyRound, LogIn, UserPlus } from 'lucide-react';
+import { KeyRound, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useSiteContent } from '@/lib/useSiteContent';
+import type { SiteContent } from '@/lib/content-defaults';
 
-export default function AuthForm() {
+export default function AuthForm({ content }: { content: SiteContent }) {
   const router = useRouter();
-  const content = useSiteContent();
   const [mode, setMode] = useState<'login' | 'forgot' | 'reset'>('login');
   const [form, setForm] = useState({ name: '', email: '', password: '', otp: '' });
   const [loading, setLoading] = useState(false);

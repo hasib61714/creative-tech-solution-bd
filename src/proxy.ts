@@ -1,3 +1,5 @@
+// Next.js 16 renamed Middleware to Proxy; the file must live beside `app`
+// and export `proxy` (or a default export). Behaviour is unchanged.
 import { NextRequest, NextResponse } from 'next/server';
 
 function decodeJwtPayload(token: string): { exp?: number } | null {
@@ -19,7 +21,7 @@ function isValidToken(token: string | undefined): boolean {
   return true;
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get('auth_token')?.value;
   const valid = isValidToken(token);
