@@ -156,9 +156,12 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 /**
- * Stand-in preview for projects with no screenshot on file. A branded browser
- * chrome is honest about being a graphic; a stock photo of a laptop would not
- * be.
+ * Stand-in preview for projects with no screenshot on file.
+ *
+ * An abstract application wireframe inside browser chrome. It is marked
+ * aria-hidden and is obviously a graphic rather than a screenshot, so it never
+ * implies a screen that does not exist — but it reads as a designed product
+ * preview instead of an empty box. A stock photo of a laptop would do neither.
  */
 export function BrowserMockup({ label, className = '' }: { label: string; className?: string }) {
   return (
@@ -170,10 +173,37 @@ export function BrowserMockup({ label, className = '' }: { label: string; classN
         <span className="h-2 w-2 rounded-full bg-red-400/70" />
         <span className="h-2 w-2 rounded-full bg-amber-400/70" />
         <span className="h-2 w-2 rounded-full bg-green-400/70" />
+        <span className="ml-2 truncate font-mono text-[9px] text-slate-500">{label}</span>
       </div>
-      <div className="relative flex flex-1 items-center justify-center bg-linear-to-br from-slate-900 via-slate-900 to-slate-800 p-6">
-        <div className="absolute inset-0 dot-grid-dark opacity-10" />
-        <span className="relative text-center font-mono text-xs tracking-wide text-slate-400">{label}</span>
+
+      <div className="relative flex min-h-0 flex-1 bg-linear-to-br from-slate-900 via-slate-900 to-slate-800">
+        <div className="absolute inset-0 dot-grid-dark opacity-[0.07]" />
+
+        {/* Sidebar */}
+        <div className="relative hidden w-1/5 shrink-0 flex-col gap-2 border-r border-white/6 p-3 sm:flex">
+          <span className="h-1.5 w-2/3 rounded-full bg-red-500/50" />
+          <span className="h-1.5 w-full rounded-full bg-white/10" />
+          <span className="h-1.5 w-4/5 rounded-full bg-white/10" />
+          <span className="h-1.5 w-3/5 rounded-full bg-white/10" />
+        </div>
+
+        {/* Content */}
+        <div className="relative flex min-w-0 flex-1 flex-col gap-2.5 p-3">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-1/3 rounded-full bg-white/25" />
+            <span className="ml-auto h-3 w-10 rounded bg-red-500/40" />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <span className="h-6 rounded bg-white/8" />
+            <span className="h-6 rounded bg-white/8" />
+            <span className="h-6 rounded bg-blue-500/20" />
+          </div>
+          <div className="flex flex-1 flex-col justify-end gap-1.5">
+            <span className="h-1.5 w-full rounded-full bg-white/8" />
+            <span className="h-1.5 w-5/6 rounded-full bg-white/8" />
+            <span className="h-1.5 w-2/3 rounded-full bg-white/8" />
+          </div>
+        </div>
       </div>
     </div>
   );
