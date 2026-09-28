@@ -1,46 +1,47 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail, MapPin } from 'lucide-react';
-import { useSiteContent } from '@/lib/useSiteContent';
+import { GithubIcon, FacebookIcon, LinkedinIcon, YoutubeIcon } from './icons';
+import type { SiteContent } from '@/lib/content-defaults';
+import { SITE } from '@/lib/site';
 
-function IconFacebook() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden="true">
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-    </svg>
-  );
-}
-function IconLinkedin() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden="true">
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect x="2" y="9" width="4" height="12" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
-}
-function IconYoutube() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden="true">
-      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" />
-    </svg>
-  );
+const SERVICE_LINKS = [
+  { label: 'Web Development', href: '/services/web-development' },
+  { label: 'Custom Software', href: '/services/web-development' },
+  { label: 'E-commerce', href: '/services/web-development' },
+  { label: 'AI & Automation', href: '/services/ai-solutions' },
+  { label: 'UI/UX Design', href: '/services/design' },
+  { label: 'SEO', href: '/services/seo' },
+];
+
+const COMPANY_LINKS = [
+  { label: 'About', href: '/about' },
+  { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Get a Quote', href: '/booking' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
+];
+
+/** A placeholder such as '#' is not a social account, so it is not rendered. */
+function isRealLink(value: string | undefined) {
+  return Boolean(value && /^https?:\/\//i.test(value));
 }
 
-export default function Footer() {
-  const content = useSiteContent();
+export default function Footer({ content }: { content: SiteContent }) {
+  const socials = [
+    { key: 'facebook', href: content.social_facebook, label: 'Facebook', Icon: FacebookIcon },
+    { key: 'linkedin', href: content.social_linkedin, label: 'LinkedIn', Icon: LinkedinIcon },
+    { key: 'youtube', href: content.social_youtube, label: 'YouTube', Icon: YoutubeIcon },
+  ].filter((item) => isRealLink(item.href));
+
   return (
-    <footer className="bg-slate-900 text-slate-300">
+    <footer className="bg-slate-950 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-
-          {/* Brand */}
-          <div className="md:col-span-1 flex flex-col items-start">
-            <Link href="/" className="mb-5">
-              <div className="bg-white rounded-xl px-4 py-2">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col items-start">
+            <Link href="/" className="mb-5" aria-label="Creative Tech Solution BD — home">
+              <div className="rounded-xl bg-white px-4 py-2">
                 <Image
                   src="/logopng.png"
                   alt="Creative Tech Solution BD"
@@ -50,74 +51,94 @@ export default function Footer() {
                 />
               </div>
             </Link>
-            <p className="text-sm text-slate-400 leading-relaxed mb-5">
-              {content.brand_tagline}
-            </p>
+            <p className="mb-5 text-sm leading-relaxed text-slate-400">{content.brand_tagline}</p>
             <div className="flex gap-2">
-              <a href={content.social_facebook} title="Facebook" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-blue-600/20 hover:border-blue-500/40 hover:text-blue-400 transition-all duration-200">
-                <IconFacebook />
+              <a
+                href={SITE.githubProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub profile"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-colors duration-200 hover:border-white/25 hover:text-white"
+              >
+                <GithubIcon />
               </a>
-              <a href={content.social_linkedin} title="LinkedIn" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-blue-600/20 hover:border-blue-500/40 hover:text-blue-400 transition-all duration-200">
-                <IconLinkedin />
-              </a>
-              <a href={content.social_youtube} title="YouTube" className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:bg-red-600/20 hover:border-red-500/40 hover:text-red-400 transition-all duration-200">
-                <IconYoutube />
-              </a>
-            </div>
-          </div>
-
-          {/* Services */}
-          <div>
-            <div className="text-xs font-bold uppercase tracking-widest text-red-400 mb-5">Services</div>
-            <div className="flex flex-col gap-3 text-sm text-slate-400">
-              {['Web Development', 'Digital Marketing', 'SEO', 'AI Solutions', 'UI/UX Design', '24/7 Support'].map((s) => (
-                <Link key={s} href="/services" className="hover:text-white hover:translate-x-1 transition-all duration-200">{s}</Link>
+              {socials.map(({ key, href, label, Icon }) => (
+                <a
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-colors duration-200 hover:border-blue-500/40 hover:text-blue-400"
+                >
+                  <Icon />
+                </a>
               ))}
             </div>
           </div>
 
-          {/* Company */}
-          <div>
-            <div className="text-xs font-bold uppercase tracking-widest text-red-400 mb-5">Company</div>
-            <div className="flex flex-col gap-3 text-sm text-slate-400">
-              {[
-                { label: 'About Us',   href: '/about' },
-                { label: 'Portfolio',  href: '/portfolio' },
-                { label: 'Contact',    href: '/contact' },
-                { label: 'Book a Call',href: '/booking' },
-              ].map((item) => (
-                <Link key={item.label} href={item.href} className="hover:text-white hover:translate-x-1 transition-all duration-200">{item.label}</Link>
+          <nav aria-label="Services">
+            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-red-400">Services</h2>
+            <ul className="flex flex-col gap-3 text-sm text-slate-400">
+              {SERVICE_LINKS.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="transition-colors duration-200 hover:text-white">
+                    {item.label}
+                  </Link>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </nav>
 
-          {/* Contact */}
+          <nav aria-label="Company">
+            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-red-400">Company</h2>
+            <ul className="flex flex-col gap-3 text-sm text-slate-400">
+              {COMPANY_LINKS.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="transition-colors duration-200 hover:text-white">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
           <div>
-            <div className="text-xs font-bold uppercase tracking-widest text-red-400 mb-5">Contact</div>
-            <div className="flex flex-col gap-3 text-sm text-slate-400">
-              <a href={`tel:${content.contact_phone_primary}`} className="flex items-center gap-2 hover:text-white transition-colors duration-200">
-                <Phone className="w-3.5 h-3.5 text-red-400 shrink-0" />{content.contact_phone_primary}
-              </a>
-              <a href={`tel:${content.contact_phone_secondary}`} className="flex items-center gap-2 hover:text-white transition-colors duration-200">
-                <Phone className="w-3.5 h-3.5 text-red-400 shrink-0" />{content.contact_phone_secondary}
-              </a>
-              <a href={`mailto:${content.contact_email}`} className="flex items-start gap-2 hover:text-white transition-colors duration-200 break-all">
-                <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />{content.contact_email}
-              </a>
-              <span className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
+            <h2 className="mb-5 text-xs font-bold uppercase tracking-widest text-red-400">Contact</h2>
+            <ul className="flex flex-col gap-3 text-sm text-slate-400">
+              <li>
+                <a href={`tel:${content.contact_phone_primary}`} className="flex items-center gap-2 transition-colors duration-200 hover:text-white">
+                  <Phone className="h-3.5 w-3.5 shrink-0 text-red-400" aria-hidden="true" />
+                  {content.contact_phone_primary}
+                </a>
+              </li>
+              <li>
+                <a href={`tel:${content.contact_phone_secondary}`} className="flex items-center gap-2 transition-colors duration-200 hover:text-white">
+                  <Phone className="h-3.5 w-3.5 shrink-0 text-red-400" aria-hidden="true" />
+                  {content.contact_phone_secondary}
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${content.contact_email}`} className="flex items-start gap-2 break-all transition-colors duration-200 hover:text-white">
+                  <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-400" aria-hidden="true" />
+                  {content.contact_email}
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" aria-hidden="true" />
                 <span>{content.contact_address}</span>
-              </span>
-            </div>
+              </li>
+            </ul>
           </div>
-
         </div>
       </div>
 
       <div className="border-t border-white/8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-          <span className="text-xs text-slate-500">&copy; {new Date().getFullYear()} {content.brand_name}. All rights reserved.</span>
-          <span className="text-xs text-slate-500">Made in Bangladesh</span>
+        <div className="max-w-7xl mx-auto flex flex-col items-center justify-between gap-2 px-4 py-4 sm:flex-row sm:px-6 lg:px-8">
+          <span className="text-xs text-slate-500">
+            &copy; {new Date().getFullYear()} {content.brand_name}. All rights reserved.
+          </span>
+          <span className="text-xs text-slate-500">Built in Bangladesh</span>
         </div>
       </div>
     </footer>

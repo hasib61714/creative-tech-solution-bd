@@ -74,7 +74,7 @@ export async function sendBookingNotification(data: {
 
 /** Notify admin of a new contact message. Silently skips if SMTP not configured. */
 export async function sendContactNotification(data: {
-  name: string; email: string; subject?: string; message: string;
+  name: string; email: string; phone?: string; subject?: string; message: string;
 }) {
   const transport = createTransport();
   if (!transport || !ADMIN_TO) return;
@@ -88,6 +88,7 @@ export async function sendContactNotification(data: {
         <h2 style="color:#dc2626">New Contact Message</h2>
         <table style="border-collapse:collapse;width:100%;background:#f9fafb;border-radius:8px;overflow:hidden">
           <tr><td style="padding:6px 12px;color:#6b7280;font-weight:500">From</td><td style="padding:6px 12px;color:#111827">${data.name} &lt;${data.email}&gt;</td></tr>
+          ${data.phone ? `<tr><td style="padding:6px 12px;color:#6b7280;font-weight:500">Phone</td><td style="padding:6px 12px;color:#111827">${data.phone}</td></tr>` : ''}
           ${data.subject ? `<tr><td style="padding:6px 12px;color:#6b7280;font-weight:500">Subject</td><td style="padding:6px 12px;color:#111827">${data.subject}</td></tr>` : ''}
         </table>
         <div style="margin:16px 0;padding:16px;background:#f9fafb;border-left:3px solid #dc2626;border-radius:0 8px 8px 0;white-space:pre-wrap;color:#374151">${data.message}</div>

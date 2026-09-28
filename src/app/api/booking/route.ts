@@ -21,7 +21,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
   }
   const { service, name, email, phone, date, time, details } = parsed.data;
-  await db.insert(bookings).values({ service, name, email, phone, date, time, details });
+  try {
+    await db.insert(bookings).values({ service, name, email, phone, date, time, details });
+  } catch {
+    // Never surface a raw database error to a visitor.
+    return NextResponse.json(
+      { error: 'We could not save your request right now. Please call or email us directly.' },
+      { status: 503 },
+    );
+  }
   void sendBookingNotification({ service, name, email, phone, date, time, details });
   return NextResponse.json({ success: true });
 }

@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
 body {
   background: #fff;
   color: #0f172a;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 * {
@@ -14,6 +19,13 @@ body {
   color: #0f172a;
 }
 
+/* Visible keyboard focus everywhere, without showing a ring on mouse clicks. */
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .dot-grid-dark {
   background-image: radial-gradient(circle at 1px 1px, rgb(148 163 184) 1px, transparent 0);
   background-size: 32px 32px;
@@ -22,4 +34,16 @@ body {
 .dot-grid-light {
   background-image: radial-gradient(circle at 1px 1px, rgb(203 213 225) 1px, transparent 0);
   background-size: 32px 32px;
+}
+
+/* Respect the operating-system setting: no motion means no motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

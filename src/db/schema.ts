@@ -47,11 +47,25 @@ export const servicesTable = mysqlTable('services', {
 export const portfolioItems = mysqlTable('portfolio_items', {
   id: int('id').primaryKey().autoincrement(),
   title: varchar('title', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }),
   category: varchar('category', { length: 100 }),
+  /** Legacy columns kept so existing rows are never orphaned. */
   metric: varchar('metric', { length: 255 }),
   tag: varchar('tag', { length: 255 }),
   description: text('description'),
+  shortDescription: varchar('short_description', { length: 500 }),
+  fullDescription: text('full_description'),
+  /** Newline-separated list. */
+  technologies: text('technologies'),
+  githubUrl: varchar('github_url', { length: 500 }),
+  liveUrl: varchar('live_url', { length: 500 }),
+  image: varchar('image', { length: 500 }),
+  featured: boolean('featured').notNull().default(false),
+  status: varchar('status', { length: 50 }),
+  projectType: varchar('project_type', { length: 50 }),
+  year: int('year'),
   createdAt: datetime('created_at').notNull().default(sql`now()`),
+  updatedAt: datetime('updated_at').notNull().default(sql`now()`),
 });
 
 export const testimonials = mysqlTable('testimonials', {
@@ -68,6 +82,7 @@ export const contactMessages = mysqlTable('contact_messages', {
   id: int('id').primaryKey().autoincrement(),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 50 }),
   subject: varchar('subject', { length: 255 }),
   message: text('message').notNull(),
   read: boolean('read').notNull().default(false),

@@ -4,15 +4,25 @@ import { useState, Fragment } from 'react';
 import { Check, ChevronRight, ArrowLeft, CalendarCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSiteContent } from '@/lib/useSiteContent';
+import type { SiteContent } from '@/lib/content-defaults';
 
-const services = ['Web Development', 'Digital Marketing', 'SEO', 'AI Solutions', 'UI/UX Design', '24/7 Support'];
+const services = [
+  'Web Development',
+  'Custom Software',
+  'E-commerce',
+  'AI & Automation',
+  'UI/UX Design',
+  'SEO',
+  'Digital Marketing',
+  'Maintenance & Support',
+];
+const budgets = ['Not sure yet', 'Under ৳25,000', '৳25,000 – ৳75,000', '৳75,000 – ৳200,000', 'Over ৳200,000'];
 const steps = ['Service', 'Your Info', 'Date & Time', 'Confirm'];
 
-export default function BookingForm() {
-  const content = useSiteContent();
+export default function BookingForm({ content }: { content: SiteContent }) {
   const [step, setStep] = useState(0);
   const [selectedService, setSelectedService] = useState('');
+  const [budget, setBudget] = useState('');
   const [info, setInfo] = useState({ name: '', email: '', phone: '', details: '' });
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -26,7 +36,15 @@ export default function BookingForm() {
       const res = await fetch('/api/booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ service: selectedService, ...info, date, time }),
+        // The bookings table has no budget column; recording it in the
+        // details keeps the information without a schema change.
+        body: JSON.stringify({
+          service: selectedService,
+          ...info,
+          details: budget ? `Budget: ${budget}${info.details ? `\n\n${info.details}` : ''}` : info.details,
+          date,
+          time,
+        }),
       });
       const data = await res.json();
       if (!res.ok) setError(data.error || 'Something went wrong');
@@ -39,7 +57,7 @@ export default function BookingForm() {
   }
 
   function startOver() {
-    setStep(0); setSelectedService('');
+    setStep(0); setSelectedService(''); setBudget('');
     setInfo({ name: '', email: '', phone: '', details: '' });
     setDate(''); setTime(''); setError(''); setSuccess(false);
   }
@@ -212,6 +230,16 @@ export default function BookingForm() {
                           className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white placeholder-slate-500 rounded-xl px-4 py-3 text-sm outline-none transition-colors resize-none"
                           value={info.details} onChange={e => setInfo({ ...info, details: e.target.value })} />
                       </div>
+                      <div className="flex flex-col gap-1.5 mt-4">
+                        <label htmlFor="booking-budget" className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                          Budget range <span className="normal-case font-normal tracking-normal text-slate-600">(optional)</span>
+                        </label>
+                        <select id="booking-budget" value={budget} onChange={e => setBudget(e.target.value)}
+                          className="bg-slate-800/60 border border-white/8 focus:border-red-500/40 text-white rounded-xl px-4 py-3 text-sm outline-none transition-colors">
+                          <option value="">Prefer not to say</option>
+                          {budgets.map(b => <option key={b} value={b}>{b}</option>)}
+                        </select>
+                      </div>
                     </div>
                   )}
 
@@ -246,6 +274,7 @@ export default function BookingForm() {
                           { label: 'Name',    value: info.name },
                           { label: 'Email',   value: info.email },
                           { label: 'Phone',   value: info.phone },
+                          ...(budget ? [{ label: 'Budget', value: budget }] : []),
                           { label: 'Date',    value: date },
                           { label: 'Time',    value: time },
                           ...(info.details ? [{ label: 'Details', value: info.details }] : []),

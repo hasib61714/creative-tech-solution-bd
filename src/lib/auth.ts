@@ -5,6 +5,21 @@ import { db } from '@/db/drizzle';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
+/**
+ * The signing secret, read at call time rather than module load.
+ *
+ * Reading it at import time made the whole application fail to build when the
+ * variable was absent; failing here instead keeps the public site working and
+ * fails only the routes that genuinely need a session.
+ */
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is not set');
+  }
+  return secret;
+}
+
 export const PERMISSIONS = [
   'dashboard',
   'manage_bookings',
@@ -31,7 +46,7 @@ export function verifyToken(req: NextRequest): AuthUser | null {
   const token = req.cookies.get('auth_token')?.value;
   if (!token) return null;
   try {
-    return jwt.verify(token, process.env.JWT_SECRET!) as AuthUser;
+    return jwt.verify(token, getJwtSecret()) as AuthUser;
   } catch {
     return null;
   }
